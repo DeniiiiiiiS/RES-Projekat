@@ -1,4 +1,7 @@
 import socket
+import pickle
+import CollectionDescription
+import DeltaCD
 
 HOST = "127.0.0.1" 
 PORT0 = 8002    # serverski port
@@ -6,24 +9,57 @@ PORT1 = 8005    # klijentski port za reader1
 PORT2 = 8006    # klijentski port za reader2
 PORT3 = 8006    # klijentski port za reader3
 PORT4 = 8007    # klijentski port za reader4
-BROJ_BAJTOVA_KOJI_SE_PRIMA = 100
+BROJ_BAJTOVA_KOJI_SE_PRIMA = 1000000
 
-podaci = [] #OVDE TREBA DA BUDE OBJEKAT KLASE DeltaCD
+address0 = (HOST, PORT0)
+address1 = (HOST, PORT1)
+address2 = (HOST, PORT2)
+address3 = (HOST, PORT3)
+address4 = (HOST, PORT4)
+
+
+delta_cd1 = DeltaCD.DeltaCD()
+delta_cd2 = DeltaCD.DeltaCD()
+delta_cd3  = DeltaCD.DeltaCD()
+delta_cd4 = DeltaCD.DeltaCD()
 
 #socket za primanje podataka
 replicatorReceiverServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-replicatorReceiverServer.bind(HOST, PORT0)
+replicatorReceiverServer.bind(address0)
 replicatorReceiverServer.listen()
+
 
 while True:
     conn, addr = replicatorReceiverServer.accept()
-    data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA).decode("utf-8")  #sacuva se primljeni podatak
-    podaci.append(data) # OVDE TREBA DA SE PODATAK UBACI U OBJEKAT KLASE DeltaCD 
-    if data == "kraj":  #OVO replicatorSender TREBA DA POSALJE KAO KRAJ SLANJA PODATAKA
-        break;
+    data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA)
+    podaci = pickle.loads(data)
+    
+    delta_cd1.dodajNovi(podaci[0].id)
+    delta_cd2.dodajNovi(podaci[1].id)
+    delta_cd3.dodajNovi(podaci[2].id)
+    delta_cd4.dodajNovi(podaci[3].id)
 
-# Preostaje imeplementacija logike slanja podatka na Reader u skladu sa uslovom
+    if(delta_cd1.add_list.count + delta_cd1.update_list.count == 10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
+                replicatorReceiverClient.connect(address1)
+                msg = pickle.dumps(delta_cd1)  
+                replicatorReceiverClient.send(msg)
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Reader:
-    Reader.connect((HOST, PORT2))
-    Reader.sendall(bytes(podaci, "utf-8"))  #TREBA DA SE TAJ OBJEKAT DeltaCD POSALJE nekom Reader-u 
+    if(delta_cd2.add_list.count + delta_cd1.update_list.count == 10):    
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
+                replicatorReceiverClient.connect(address2)
+                msg = pickle.dumps(delta_cd2)  
+                replicatorReceiverClient.send(msg)
+
+    if(delta_cd3.add_list.count + delta_cd1.update_list.count == 10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
+                replicatorReceiverClient.connect(address3)
+                msg = pickle.dumps(delta_cd3)  
+                replicatorReceiverClient.send(msg)     
+
+    if(delta_cd4.add_list.count + delta_cd1.update_list.count == 10):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
+                replicatorReceiverClient.connect(address4)
+                msg = pickle.dumps(delta_cd1)  
+                replicatorReceiverClient.send(msg)  
+
