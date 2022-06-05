@@ -5,9 +5,10 @@ from time import sleep
 
 HOST = "127.0.0.1"
 PORT = 8001
+address = (HOST, PORT)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
+    s.connect(address)
 
     while True:
         print("WRITER: Please input your data")
@@ -22,11 +23,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             break
 
         data = code + ";" + value
-
+        sleep(2)
         s.sendall(data.encode('utf-8'))
 
-        sleep(2)
+
         print("Writer has sent your data to the next destination")
 
-data = "-1;END"
-s.sendall(data)
+#data = "-1;END"
+#s.sendall(data)
