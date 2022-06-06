@@ -36,7 +36,7 @@ def  ubaci_u_CollectionDescription(recProp):
     elif recProp.code == codovi.Code.CODE_CONSUMER.value or recProp.code == codovi.Code.CODE_SOURCE.value:
         cd4.dodaj_u_HistoricalCollection(recProp)
 
-def isprazniBuffer(self, buffer_cdova):
+def isprazniBuffer(buffer_cdova):
     buffer_cdova[0].isprazniHistoricalCollection()
     buffer_cdova[1].isprazniHistoricalCollection()
     buffer_cdova[2].isprazniHistoricalCollection()
@@ -45,7 +45,7 @@ def isprazniBuffer(self, buffer_cdova):
 
 #socket za primanje podataka
 replicatorSenderServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-replicatorSenderServer.bind(HOST, PORT1)
+replicatorSenderServer.bind((HOST, PORT1))
 replicatorSenderServer.listen(MAX_BROJ_WRITERA)
 conn, addr = replicatorSenderServer.accept()
 trenutak_pocetka_prijema_podataka = time.time()
