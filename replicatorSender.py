@@ -1,6 +1,8 @@
 import socket, pickle
 import time
+from tracemalloc import start
 import receiverProperty, historicalCollection, collectionDescription, codovi
+import threading
 
 
 MAX_BROJ_WRITERA = 10
@@ -42,7 +44,43 @@ def isprazniBuffer(buffer_cdova):
     buffer_cdova[2].isprazniHistoricalCollection()
     buffer_cdova[3].isprazniHistoricalCollection()
 
+def provera_za_slanje(trenutak_pocetka_prijema):
+    while True:
+        if time.time() > (trenutak_pocetka_prijema + INTERVAL_SLANJA):  #AKO JE PROSLO 90 SEKUNDI POSALJI NIZ OD 4 CD OBJEKTA
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorSenderClient:
+                replicatorSenderClient.connect((HOST,PORT2))
+                msg = pickle.dumps(buffer)  #KONVERTUJE U NIZ BAJTOVA
+                replicatorSenderClient.send(msg)
+                isprazniBuffer(buffer)
+                trenutak_pocetka_prijema = time.time()  #POSTAVI NA TRENUTNO VREME
 
+def handle_writer(connection, address):
+    while True:
+        data = connection.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA).decode("utf-8") #SACUVA SE PRIMLJENI PODATAK
+        rc = konvertuj_u_ReceiverProperty(data)
+        ubaci_u_CollectionDescription(rc)
+
+def start_SenderServer(socket_SenderServer):
+    socket_SenderServer.listen(MAX_BROJ_WRITERA)
+    print("ReplicatorSender is listening!")
+    while True:
+        conn, addr = socket_SenderServer.accept()
+        thread = threading.Thread(target=handle_writer, args=(conn, addr)) #    ZA SVAKI WRITER SE KREIRA NOVI NIT
+        thread.start()
+        print(f"Broj konektovanih writer je {threading.active_count() - 2}")
+
+
+trenutak_pocetka_prijema_podataka = time.time()
+
+thread_slanja = threading.Thread(target=provera_za_slanje, args=(trenutak_pocetka_prijema_podataka,))   #POSEBNA NIT ZA PROVERU SLANJA
+thread_slanja.start()
+
+replicatorSenderServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+replicatorSenderServer.bind((HOST, PORT1))
+
+start_SenderServer(replicatorSenderServer)
+
+'''
 #socket za primanje podataka
 replicatorSenderServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 replicatorSenderServer.bind((HOST, PORT1))
@@ -52,9 +90,6 @@ trenutak_pocetka_prijema_podataka = time.time()
 
 while True:
     data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA).decode("utf-8")  #sacuva se primljeni podatak
-
-    
-
     rc = konvertuj_u_ReceiverProperty(data)
     ubaci_u_CollectionDescription(rc)
     
@@ -65,17 +100,7 @@ while True:
             replicatorSenderClient.send(msg)
             isprazniBuffer(buffer)
             trenutak_pocetka_prijema_podataka = time.time() #POSTAVI NA TRENUTNO VREME
-
-
-
-
-
-
-
-
-
-
-
+'''
 
 # PRVA IMPLEMENTACIJA
 '''
