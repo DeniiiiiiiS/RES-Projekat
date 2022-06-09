@@ -2,59 +2,78 @@
 
 import socket
 import mysql.connector
-import datetime
-from difflib import SequenceMatcher
+import pickle
+
+import CollectionDescription
+import historicalCollection
+import DeltaCD
+import receiverProperty
 
 HOST = "127.0.0.1"
 PORT = 8006
+NUMBER_OF_BYTES = 1000000
 
-# pravljenje DATABASE DataSet2
-DataBaseSet2 = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="root"
-)
-mycursor = DataBaseSet2.cursor()
-mycursor.execute("CREATE DATABASE DataSet2")
 
-# povezivanje na DATABASE DataSet2
-DataBaseSet2 = mysql.connector.connect(
+# pravljenje DATABASE database_reader ako ne postoji
+def create_database():
+    sqldb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root")
+    mycur = sqldb.cursor()
+    mycur.execute("SELECT IF(EXISTS( SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA"
+                  " WHERE SCHEMA_NAME = 'database_reader'), 'Yes', 'No') as exist")
+    myresult = mycur.fetchone()
+    if myresult[0] == "Yes":
+        print("Database already exists, connecting to database_reader")
+    else:
+        print("Creating database")
+        mycursor.execute("create database database_reader")
+
+
+# povezivanje na DATABASE database_reader
+DB = mysql.connector.connect(
     host="localhost",
     user="root",
     password="root",
-    database="DataSet2"
+    database="database_reader"
 )
-mycursor = DataBaseSet2.cursor()
-# kreiranje tabele DataSet2
-mycursor.execute("CREATE TABLE DataSet2 (ID int PRIMARY KEY, "
-                 "CODE VARCHAR(50), VALUE VARCHAR(100), DATE DATETIME)")
+mycursor = DB.cursor()
+# kreiranje tabele tabledata2 ako ne postoji
+mycursor.execute("create table tabledata2 (id int, dataset int, "
+                 "code varchar(20), value int, date datetime PRIMARY KEY default now())")
 
 
 # funkcija koja proverava code
-def insert_process(id_data, code, value):
+def insert_process(id_data, dataset, code, value):
     if code == "CODE_DIGITAL":
-        print("Code is CODE_DIGITAL, inserting data into table DataSet2")
-        return insert(id_data, code, value)
+        print("Code is CODE_DIGITAL, inserting data into table tabledata2")
+        return insert(id_data, dataset, code, value)
     else:
-        return check_deadband(id_data, code, value)
+        return check_deadband(id_data, dataset, code, value)
 
 
 # funkcija koja proverava deadband uslov
-def check_deadband(id_data, code, value):
-    mycursor.execute("SELECT VALUE from DataSet2")
+def check_deadband(id_data, dataset, code, value):
+    mycursor.execute("select value from tabledata2 where code = %s", code)
     myresult = mycursor.fetchall()
+    i = 0
+    j = 0
     for row in myresult:
-        if SequenceMatcher(a=row.values(), b=value).ratio() < 0.98:
-            print("Difference between values is greater than 2%, inserting data into table DataSet1")
-            return insert(id_data, code, value)
-        else:
-            print("Difference between values is less than 2%, skipping insert")
+        if ((abs(row[i] - value) / (row[i] + value)) / 2) * 100 > 2:
+            j += 1
+        i += 1
+    if j >= 1:
+        print("Difference between values is greater than 2%, inserting data into table DataSet1")
+        return insert(id_data, dataset, code, value)
+    else:
+        print("No insertion, difference between values is less than 2%")
 
 
 # funkcija koja upisuje u tabelu podatke
-def insert(id_data, code, value):
-    mycursor.execute("INSERT INTO DataSet2(ID, CODE, VALUE, DATE), VALUES (%s, %s, %s, %s)",
-                     (id_data, code, value, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+def insert(id_data, dataset, code, value):
+    mycursor.execute("insert into tabledata2(id, dataset, code, value, date), VALUES (%s, %s, %s, %s, now())",
+                     (id_data, dataset, code, value))
 
 
 # povezivanje sa replicator receiver-om
@@ -65,9 +84,26 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print(f"Replicator receiver connected from {addr}")
         while True:
-            data = conn.recv(1024).decode()
-            # ovde treba da se izvuku code i value iz lista vrednosti
-            # i ubace u funkciju insert_process(id_data, code, value)
-            # koja ce pokrenuti lanac funkcija za upis u tabelu
-            if not data:
-                break
+            inc_data = conn.recv(NUMBER_OF_BYTES)
+            data = pickle.loads(inc_data)
+
+            add_lista = data.add_list
+            update_lista = data.update_list
+
+            for cdx in add_lista:
+                id_add = cdx.getId()
+                dataset_add = cdx.getDataset()
+                hc_add = cdx.getHistoricalCollection().getNiz()
+                for cdy in hc_add:
+                    code_add = cdy.getCode()
+                    value_add = cdy.getValue()
+                    insert(id_add, dataset_add, code_add, value_add)
+
+            for cdx in update_lista:
+                id_add = cdx.getId()
+                dataset_add = cdx.getDataset()
+                hc_add = cdx.getHistoricalCollection().getNiz()
+                for cdy in hc_add:
+                    code_add = cdy.getCode()
+                    value_add = cdy.getValue()
+                    insert_process(id_add, dataset_add, code_add, value_add)
