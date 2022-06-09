@@ -1,7 +1,7 @@
 import historicalCollection
 
 class CollectionDescription:
-    def __init__(self, id,data_set):
+    def __init__(self, id, data_set):
         self.id = id
         self.data_set = data_set
         self.historical_collection = historicalCollection.HistoricalCollection()
