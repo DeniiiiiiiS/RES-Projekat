@@ -11,6 +11,9 @@ class CollectionDescription:
 
     def  isprazniHistoricalCollection(self):
         self.historical_collection.isprazni()
+
+    def getHistoricalCollection(self):
+        return self.historical_collection
         
 
 
