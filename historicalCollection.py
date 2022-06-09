@@ -9,3 +9,5 @@ class HistoricalCollection:
     
     def isprazni(self):
         self.nizReceiverProperty.clear()
+    def getNiz(self):
+        return self.nizReceiverProperty
