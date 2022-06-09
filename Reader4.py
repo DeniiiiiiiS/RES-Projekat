@@ -60,7 +60,7 @@ def check_deadband(id_data, dataset, code, value):
     i = 0
     j = 0
     for row in myresult:
-        if ((abs(row[i] - value) / (row[i] + value)) / 2) * 100 > 2:
+        if (abs(row[i] - value) / ((row[i] + value) / 2)) * 100 > 2:
             j += 1
         i += 1
     if j >= 1:
