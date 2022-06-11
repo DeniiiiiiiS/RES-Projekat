@@ -17,6 +17,10 @@ address2 = (HOST, PORT2)
 address3 = (HOST, PORT3)
 address4 = (HOST, PORT4)
 
+codeOneCounter, codeTwoCounter, codeThreeCounter, codeFourCounter = 0
+
+buffer = []
+
 
 delta_cd1 = DeltaCD.DeltaCD()
 delta_cd2 = DeltaCD.DeltaCD()
@@ -29,15 +33,51 @@ replicatorReceiverServer.bind(address0)
 replicatorReceiverServer.listen()
 
 
+def checker(code, delta, i):
+    if code == 0:
+        delta.dodajNovi(buffer[i].id)
+        code += 1
+    else:
+        delta.azurirajPostojeci(buffer[i].id)
+    
+
+
 while True:
     conn, addr = replicatorReceiverServer.accept()
     data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA)
-    podaci = pickle.loads(data)
+    buffer = pickle.loads(data)
     
-    delta_cd1.dodajNovi(podaci[0].id)
-    delta_cd2.dodajNovi(podaci[1].id)
-    delta_cd3.dodajNovi(podaci[2].id)
-    delta_cd4.dodajNovi(podaci[3].id)
+    checker(codeOneCounter, delta_cd1, 0)
+    checker(codeTwoCounter, delta_cd2, 1)
+    checker(codeThreeCounter, delta_cd3, 2)
+    checker(codeFourCounter, delta_cd4, 3)
+
+    '''
+    if codeOneCounter == 0:
+        delta_cd1.dodajNovi(buffer[0].id)
+        codeOneCounter += 1
+    else:
+        delta_cd1.azurirajPostojeci(buffer[0].id)
+
+    if codeTwoCounter == 0:
+        delta_cd2.dodajNovi(buffer[1].id)
+        codeTwoCounter += 1
+    else:
+        delta_cd2.azurirajPostojeci(buffer[1].id)
+
+    if codeThreeCounter == 0:
+        delta_cd3.dodajNovi(buffer[2].id)
+        codeThreeCounter += 1
+    else:
+        delta_cd3.azurirajPostojeci(buffer[2].id)
+
+    if codeFourCounter == 0:
+        delta_cd4.dodajNovi(buffer[3].id)
+        codeFourCounter += 1
+    else:
+        delta_cd4.azurirajPostojeci(buffer[3].id)
+
+    '''
 
     if(delta_cd1.add_list.count + delta_cd1.update_list.count == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
@@ -62,4 +102,3 @@ while True:
                 replicatorReceiverClient.connect(address4)
                 msg = pickle.dumps(delta_cd1)  
                 replicatorReceiverClient.send(msg)  
-
