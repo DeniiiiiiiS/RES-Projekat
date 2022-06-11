@@ -2,7 +2,6 @@
 
 import CollectionDescription
 
-
 class DeltaCD:
     def __init__(self):
         self.add_list = []   # Lista u kojoj se nalaze objekti CD koji trebaju da se dodaju u bazu
