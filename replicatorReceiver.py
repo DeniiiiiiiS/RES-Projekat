@@ -37,7 +37,7 @@ replicatorReceiverServer.listen()
 
 time_now = time.localtime()
                 
-with open("replicatorReceiver.txt", 'a') as f:
+with open("replicatorReceiver.txt", 'time_now') as f:
     f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno otvoren server za osluskivanje!\n")
 
 
@@ -58,7 +58,7 @@ while True:
 
     time_now = time.localtime()
                 
-    with open("replicatorReceiver.txt", 'a') as f:
+    with open("replicatorReceiver.txt", 'time_now') as f:
         f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno primljeni podaci na server!\n")
 
     i = 0
@@ -118,7 +118,7 @@ while True:
                 replicatorReceiverClient.send(msg)
                 time_now = time.localtime()
                 
-                with open("replicatorReceiver.txt", 'a') as f:
+                with open("replicatorReceiver.txt", 'time_now') as f:
                     f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno poslani podaci na Reader 1!\n")
 
     if(delta_cd2.add_list.count + delta_cd1.update_list.count == 10):    
@@ -128,7 +128,7 @@ while True:
                 replicatorReceiverClient.send(msg)
                 time_now = time.localtime()
                 
-                with open("replicatorReceiver.txt", 'a') as f:
+                with open("replicatorReceiver.txt", 'time_now') as f:
                     f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno poslani podaci na Reader 2!\n")
 
     if(delta_cd3.add_list.count + delta_cd1.update_list.count == 10):
@@ -138,7 +138,7 @@ while True:
                 replicatorReceiverClient.send(msg)
                 time_now = time.localtime()
                 
-                with open("replicatorReceiver.txt", 'a') as f:
+                with open("replicatorReceiver.txt", 'time_now') as f:
                     f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno poslani podaci na Reader 3!\n")     
 
     if(delta_cd4.add_list.count + delta_cd1.update_list.count == 10):
@@ -148,5 +148,5 @@ while True:
                 replicatorReceiverClient.send(msg)
                 time_now = time.localtime()
                 
-                with open("replicatorReceiver.txt", 'a') as f:
+                with open("replicatorReceiver.txt", 'time_now') as f:
                     f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, Uspesno poslani podaci na Reader 4!\n") 
