@@ -1,7 +1,7 @@
 import socket
 import pickle
-import CollectionDescription
-import DeltaCD
+import collectionDescription
+import deltaCD
 
 HOST = "127.0.0.1" 
 PORT0 = 8002    # serverski port
@@ -18,10 +18,10 @@ address3 = (HOST, PORT3)
 address4 = (HOST, PORT4)
 
 
-delta_cd1 = DeltaCD.DeltaCD()
-delta_cd2 = DeltaCD.DeltaCD()
-delta_cd3  = DeltaCD.DeltaCD()
-delta_cd4 = DeltaCD.DeltaCD()
+delta_cd1 = deltaCD.DeltaCD()
+delta_cd2 = deltaCD.DeltaCD()
+delta_cd3  = deltaCD.DeltaCD()
+delta_cd4 = deltaCD.DeltaCD()
 
 #socket za primanje podataka
 replicatorReceiverServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
