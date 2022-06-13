@@ -21,6 +21,8 @@ buffer.append(cd1); buffer.append(cd2); buffer.append(cd3); buffer.append(cd4);
 
 
 def konvertuj_u_ReceiverProperty(data):
+    if data == "":
+        return "lose"
     split_karakter = ";"
     podatak = data.split(split_karakter)
     code = podatak[0]
@@ -33,37 +35,37 @@ def konvertuj_u_ReceiverProperty(data):
 
 def  ubaci_u_CollectionDescription(recProp):
     if recProp.code == codovi.Code.CODE_ANALOG.value or recProp.code == codovi.Code.CODE_DIGITAL.value:
-        if recProp.value == 666:
+        if recProp.receiver_value == 666:
             return False
         else:
             cd1.dodaj_u_HistoricalCollection(recProp)
             return True
     elif recProp.code == codovi.Code.CODE_CUSTOM.value or recProp.code == codovi.Code.CODE_LIMITSET.value:
-        if recProp.value == 666:
+        if recProp.receiver_value == 666:
             return False
         else:    
             cd2.dodaj_u_HistoricalCollection(recProp)
             return True
     elif recProp.code == codovi.Code.CODE_SINGLENODE.value or recProp.code == codovi.Code.CODE_MULTIPLENODE.value:
-        if recProp.value == 666:
+        if recProp.receiver_value == 666:
             return False
         else:    
             cd3.dodaj_u_HistoricalCollection(recProp)
             return True
     elif recProp.code == codovi.Code.CODE_CONSUMER.value or recProp.code == codovi.Code.CODE_SOURCE.value:
-        if recProp.value == 666:
+        if recProp.receiver_value == 666:
             return False
         else:
             cd4.dodaj_u_HistoricalCollection(recProp)
             return True
     return False
 
-def isprazniBuffer(buffer_cdova):
-    buffer_cdova[0].isprazniHistoricalCollection()
-    buffer_cdova[1].isprazniHistoricalCollection()
-    buffer_cdova[2].isprazniHistoricalCollection()
-    buffer_cdova[3].isprazniHistoricalCollection()
-    return buffer_cdova
+def isprazniBuffer():
+    buffer[0].isprazniHistoricalCollection()
+    buffer[1].isprazniHistoricalCollection()
+    buffer[2].isprazniHistoricalCollection()
+    buffer[3].isprazniHistoricalCollection()
+    
 
 def provera_za_slanje(trenutak_pocetka_prijema):
     while True:
@@ -73,7 +75,7 @@ def provera_za_slanje(trenutak_pocetka_prijema):
                 msg = pickle.dumps(buffer)  #KONVERTUJE U NIZ BAJTOVA
                 replicatorSenderClient.send(msg)
                 Logger("Podaci poslati replicator receiveru!")
-                buffer =  isprazniBuffer(buffer)
+                isprazniBuffer()
                 Logger("Buffer je ispraznjen!")
                 trenutak_pocetka_prijema = time.time()  #POSTAVI NA TRENUTNO VREME
 
@@ -82,12 +84,15 @@ def handle_writer(connection, address):
         data = connection.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA).decode("utf-8") #SACUVA SE PRIMLJENI PODATAK
         Logger(f"Podatak primljen od writera sa adrese {address}!")
         rc = konvertuj_u_ReceiverProperty(data)
+        if rc == "lose":
+            Logger(f"Writer je prekinuo konekciju sa adrese {address}!")
+            print(f"Broj konektovanih writer je {threading.active_count() - 2}")
+            break
         if ubaci_u_CollectionDescription(rc):
             Logger("Podatak je validan i sacuvan u buffer!")
         else:
             Logger(f"Podatak primljen od writera sa adrese {address} nije validan!")
 
-#ATCSERLENI HOGY WITH-HEL LEGYEN
 def start_SenderServer(socket_SenderServer):
     socket_SenderServer.listen(MAX_BROJ_WRITERA)
     print("ReplicatorSender is listening!")
@@ -100,8 +105,8 @@ def start_SenderServer(socket_SenderServer):
 
 def Logger(tekst):
     vreme = time.localtime()
-    with open("LoggerSender.txt", 'a') as f:
-        f.write(f"{vreme.tm_mday}.{vreme.tm_mon}.{vreme.tm_hour}, {vreme.tm_hour}:{vreme.tm_min}:{vreme.tm_sec}, "+tekst+"!")
+    with open("sender.txt", 'a') as f:
+        f.write(f"{vreme.tm_mday}.{vreme.tm_mon}.{vreme.tm_hour}, {vreme.tm_hour}:{vreme.tm_min}:{vreme.tm_sec}, "+tekst+"\n")
         return True
 
 
@@ -114,47 +119,3 @@ replicatorSenderServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 replicatorSenderServer.bind((HOST, PORT1))
 
 start_SenderServer(replicatorSenderServer)
-
-
-
-'''
-import deltaCD
-podaci = deltaCD.DeltaCD()
-
-
-nizReceiverProperty = podaci.add_list[0].getHistoricalCollection().getNiz()
-nizReceiverProperty[0].getValue()
-nizReceiverProperty[0].getCode()
-
-'''
-
-
-
-
-'''
-#socket za primanje podataka
-replicatorSenderServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-replicatorSenderServer.bind((HOST, PORT1))
-replicatorSenderServer.listen(MAX_BROJ_WRITERA)
-conn, addr = replicatorSenderServer.accept()
-trenutak_pocetka_prijema_podataka = time.time()
-
-while True:
-    data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA).decode("utf-8")  #sacuva se primljeni podatak
-    rc = konvertuj_u_ReceiverProperty(data)
-    ubaci_u_CollectionDescription(rc)
-    
-    if time.time() >  (trenutak_pocetka_prijema_podataka + INTERVAL_SLANJA):    #AKO JE PROSLO 90 SEKUNDI POSALJI OBJEKAT CD RECEIVERU
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorSenderClient:
-            replicatorSenderClient.connect((HOST, PORT2))
-            msg = pickle.dumps(buffer)  #KONVERTUJE SE NIZ CDOVA U BAJTOVE
-            replicatorSenderClient.send(msg)
-            isprazniBuffer(buffer)
-            trenutak_pocetka_prijema_podataka = time.time() #POSTAVI NA TRENUTNO VREME
-'''
-
-
-
-
-
-
