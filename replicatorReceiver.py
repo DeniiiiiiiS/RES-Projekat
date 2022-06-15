@@ -1,13 +1,8 @@
 import socket
 import pickle
-<<<<<<< HEAD
-import collectionDescription
-import deltaCD
-=======
 import CollectionDescription
 import DeltaCD
 import time
->>>>>>> 26d27cf5afc56bfc8bf85a93f3d5adf23a9f5afe
 
 HOST = "127.0.0.1" 
 PORT0 = 8002    # serverski port
