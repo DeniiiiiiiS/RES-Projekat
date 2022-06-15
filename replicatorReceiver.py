@@ -23,10 +23,10 @@ codeOneCounter, codeTwoCounter, codeThreeCounter, codeFourCounter = 0
 buffer = []
 delta_cd = []
 
-delta_cd1 = deltaCD.DeltaCD()
-delta_cd2 = deltaCD.DeltaCD()
-delta_cd3  = deltaCD.DeltaCD()
-delta_cd4 = deltaCD.DeltaCD()
+delta_cd1 = DeltaCD.DeltaCD()
+delta_cd2 = DeltaCD.DeltaCD()
+delta_cd3  = DeltaCD.DeltaCD()
+delta_cd4 = DeltaCD.DeltaCD()
 
 delta_cd.append(delta_cd1); delta_cd.append(delta_cd2); delta_cd.append(delta_cd3); delta_cd.append(delta_cd4);
 
@@ -69,28 +69,28 @@ while True:
         i += 1
 
 
-    if(delta_cd1.add_list.count + delta_cd1.update_list.count == 10):
+    if(len(delta_cd1.add_list) + len(delta_cd1.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address1)
                 msg = pickle.dumps(delta_cd1)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 1!")
 
-    if(delta_cd2.add_list.count + delta_cd1.update_list.count == 10):    
+    if(len(delta_cd2.add_list) + len(delta_cd2.update_list) == 10):    
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address2)
                 msg = pickle.dumps(delta_cd2)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 2!")
 
-    if(delta_cd3.add_list.count + delta_cd1.update_list.count == 10):
+    if(len(delta_cd3.add_list) + len(delta_cd3.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address3)
                 msg = pickle.dumps(delta_cd3)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 3!")
 
-    if(delta_cd4.add_list.count + delta_cd1.update_list.count == 10):
+    if(len(delta_cd4.add_list) + len(delta_cd4.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address4)
                 msg = pickle.dumps(delta_cd1)  
