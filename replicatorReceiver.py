@@ -18,7 +18,11 @@ address2 = (HOST, PORT2)
 address3 = (HOST, PORT3)
 address4 = (HOST, PORT4)
 
-codeOneCounter, codeTwoCounter, codeThreeCounter, codeFourCounter = 0
+#codeOneCounter, codeTwoCounter, codeThreeCounter, codeFourCounter = 0
+codeOneCounter = 0
+codeTwoCounter = 0
+codeThreeCounter = 0
+codeFourCounter = 0
 
 buffer = []
 delta_cd = []
@@ -32,13 +36,14 @@ delta_cd.append(delta_cd1); delta_cd.append(delta_cd2); delta_cd.append(delta_cd
 
 def logger(message):
     time_now = time.localtime()
-    with open("writer.txt", 'a') as f:
+    with open("receiver.txt", 'a') as f:
         f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, {message}\n")
 
 #socket za primanje podataka
 replicatorReceiverServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 replicatorReceiverServer.bind(address0)
 replicatorReceiverServer.listen()
+print("Cekanje na konekciju...")
 logger("Uspesno otvoren server za osluskivanje!")
 
 
