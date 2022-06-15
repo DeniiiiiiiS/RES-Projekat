@@ -33,7 +33,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             logger("Uneta vrednost za zaustavljanje rada writera")
             break
 
-        if code >= 1 and code <= 8:
+        if int(code) >= 1 and int(code) <= 8:
             sleep(2)
             data = str(code) + ";" + str(value)
             s.sendall(data.encode('utf-8'))
