@@ -1,15 +1,12 @@
 import socket
 import time
 from time import sleep
+from writer_functions import logger
 
 HOST = "127.0.0.1"
 PORT = 8001
 address = (HOST, PORT)
 
-def logger(message):
-    time_now = time.localtime()
-    with open("writer.txt", 'a') as f:
-        f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, {message}\n")
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect(address)
@@ -44,5 +41,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             logger("Uneta nevalidna vrednost za kod: broj nije izmedju 1 i 8")
 
         
-s.close(address)
 logger("Uspesno zatvoren writer klijent")
