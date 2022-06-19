@@ -2,7 +2,7 @@ import socket
 import pickle
 import CollectionDescription
 import DeltaCD
-import time
+from replicatorReceiver_functions import logger
 
 HOST = "127.0.0.1" 
 PORT0 = 8002    # serverski port
@@ -35,13 +35,14 @@ delta_cd4 = DeltaCD.DeltaCD()
 
 delta_cd.append(delta_cd1); delta_cd.append(delta_cd2); delta_cd.append(delta_cd3); delta_cd.append(delta_cd4);
 
-def logger(message):
-    time_now = time.localtime()
-    with open("receiver.txt", 'a') as f:
-        f.write(f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}, {message}\n")
+def check(delt):
+    if(len(delt.add_list) + len(delt.update_list) == 10):
+        return True
+    else:
+        return False
 
 def send(i):
-    if(len(delta_cd[i].add_list) + len(delta_cd[i].update_list) == 10):
+    if(check(delta_cd[i])):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address[i])
                 msg = pickle.dumps(delta_cd[i])  
@@ -61,7 +62,7 @@ while True:
     conn, addr = replicatorReceiverServer.accept()
     data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA)
     buffer = pickle.loads(data)
-
+    print(len(delta_cd1.add_list))
     logger("Uspesno primljeni podaci na server!")
 
     i = 0
@@ -83,7 +84,7 @@ while True:
                 logger("Uspesno dodan vec postojeci kod u update listu!")
         i += 1
 
-    for k in range (1, 5):
+    for k in range (0, 4):
         send(k)
 
 
