@@ -26,6 +26,7 @@ codeFourCounter = 0
 buffer = []
 delta_cd = []
 address = []
+kodovi = []
 address.append(address1); address.append(address2); address.append(address3); address.append(address4);
 
 delta_cd1 = DeltaCD.DeltaCD()
@@ -64,37 +65,45 @@ while True:
     buffer = pickle.loads(data)
     print(len(delta_cd1.add_list))
     logger("Uspesno primljeni podaci na server!")
+    print(len(delta_cd1.update_list))
 
     i = 0
     for delta in delta_cd:
 
-        kodovi = []
 
         id_iz_buff = buffer[i].getId()
         dataset_iz_buff = buffer[i].getDataset()
         for y in buffer[i].getHistoricalCollection().getNiz():
             code_iz_buff = y.getCode()
+            print(code_iz_buff)
             value_iz_buff = y.getValue()
+            print(value_iz_buff)
             if code_iz_buff not in kodovi:
                 delta.dodajNovi(buffer[i])
                 kodovi.append(code_iz_buff)
+                print(kodovi)
                 logger("Uspesno dodan novi kod u add listu!")
             else:
                 delta.azurirajPostojeci(buffer[i])
                 logger("Uspesno dodan vec postojeci kod u update listu!")
         i += 1
 
-    for k in range (0, 4):
-        send(k)
+    #for k in range (0, 4):
+        #send(k)
 
 
-    '''
+    
     if(len(delta_cd1.add_list) + len(delta_cd1.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address1)
                 msg = pickle.dumps(delta_cd1)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 1!")
+                delta_cd1.add_list.clear()
+                delta_cd1.update_list.clear()
+                logger("Liste za deltaCD1 ispraznjene!")
+
+
 
     if(len(delta_cd2.add_list) + len(delta_cd2.update_list) == 10):    
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
@@ -102,6 +111,9 @@ while True:
                 msg = pickle.dumps(delta_cd2)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 2!")
+                delta_cd2.add_list.clear()
+                delta_cd2.update_list.clear()
+                logger("Liste za deltaCD2 ispraznjene!")
 
     if(len(delta_cd3.add_list) + len(delta_cd3.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
@@ -109,11 +121,17 @@ while True:
                 msg = pickle.dumps(delta_cd3)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 3!")
+                delta_cd3.add_list.clear()
+                delta_cd3.update_list.clear()
+                logger("Liste za deltaCD3 ispraznjene!")
 
     if(len(delta_cd4.add_list) + len(delta_cd4.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address4)
                 msg = pickle.dumps(delta_cd1)  
                 replicatorReceiverClient.send(msg)
-                logger("Uspesno poslani podaci na Reader 4!") 
-    '''
+                logger("Uspesno poslani podaci na Reader 4!")
+                delta_cd4.add_list.clear()
+                delta_cd4.update_list.clear()
+                logger("Liste za deltaCD4 ispraznjene!")
+    
