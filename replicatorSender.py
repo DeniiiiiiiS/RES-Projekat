@@ -1,8 +1,10 @@
 import socket, pickle
 import time
 from tracemalloc import start
-import receiverProperty, historicalCollection, collectionDescription, codovi
+import receiverProperty, historicalCollection, CollectionDescription, codovi
 import threading
+from sender_functions import konvertuj_u_ReceiverProperty
+from sender_functions import Logger
 
 
 MAX_BROJ_WRITERA = 10
@@ -11,27 +13,13 @@ HOST = "127.0.0.1"
 PORT1 = 8001;   PORT2 = 8002;
 INTERVAL_SLANJA = 120    #U SEKUNDAMA IZRAZENO
 
-cd1 = collectionDescription.CollectionDescription(1, "neki_data_set")
-cd2 = collectionDescription.CollectionDescription(2, "neki_data_set")
-cd3 = collectionDescription.CollectionDescription(3, "neki_data_set")
-cd4 = collectionDescription.CollectionDescription(4, "neki_data_set")
+cd1 = CollectionDescription.CollectionDescription(1, "neki_data_set")
+cd2 = CollectionDescription.CollectionDescription(2, "neki_data_set")
+cd3 = CollectionDescription.CollectionDescription(3, "neki_data_set")
+cd4 = CollectionDescription.CollectionDescription(4, "neki_data_set")
 
 buffer = []
 buffer.append(cd1); buffer.append(cd2); buffer.append(cd3); buffer.append(cd4); 
-
-
-def konvertuj_u_ReceiverProperty(data):
-    if data == "":
-        return "lose"
-    split_karakter = ";"
-    podatak = data.split(split_karakter)
-    code = podatak[0]
-    c = int(code) if code.isdigit() else 666 #PROVERA DA LI SMO PRIMILI BROJ
-    
-    value = podatak[1]
-    v = int(value) if value.isdigit() else 666 #PROVERA DA LI SMO PRIMILI BROJ
-    a = receiverProperty.ReceiverProperty(int(c),int(v))
-    return a
 
 def  ubaci_u_CollectionDescription(recProp):
     if recProp.code == codovi.Code.CODE_ANALOG.value or recProp.code == codovi.Code.CODE_DIGITAL.value:
@@ -102,12 +90,6 @@ def start_SenderServer(socket_SenderServer):
         thread = threading.Thread(target=handle_writer, args=(conn, addr)) #    ZA SVAKI WRITER SE KREIRA NOVI NIT
         thread.start()
         print(f"Broj konektovanih writer je {threading.active_count() - 2}")
-
-def Logger(tekst):
-    vreme = time.localtime()
-    with open("sender.txt", 'a') as f:
-        f.write(f"{vreme.tm_mday}.{vreme.tm_mon}.{vreme.tm_hour}, {vreme.tm_hour}:{vreme.tm_min}:{vreme.tm_sec}, "+tekst+"\n")
-        return True
 
 
 trenutak_pocetka_prijema_podataka = time.time()
