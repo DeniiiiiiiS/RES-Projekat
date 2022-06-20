@@ -16,6 +16,7 @@ HOST = "127.0.0.1"
 PORT = 8005
 NUMBER_OF_BYTES = 1000000
 
+counter = 0
 
 def logger(message):
     time_now = localtime()
@@ -155,47 +156,55 @@ def read_values_by_code(connection, code_number):
     logger("Reader1 successfully executed function: [read_values_by_code].")
 
 
-def start_reader1():
-    connect_to_database()
-    connection = mydb_connection("localhost", "root", "root")
-    logger("Reader1 successfully connected to database.")
-    create_table(connection)
-
-    # povezivanje sa replicator receiver-om
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
+#def start_reader1():
+connect_to_database()
+connection = mydb_connection("localhost", "root", "root")
+logger("Reader1 successfully connected to database.")
+create_table(connection)
+# povezivanje sa replicator receiver-om
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    while True:
         s.listen()
         print("Reader1: Waiting for connection...")
         logger("Reader1 waiting for connection.")
         conn, addr = s.accept()
-        with conn:
-            print(f"Reader1: Replicator receiver connected from {addr}")
-            logger("ReplicatorReceiver successfully connected to Reader1.")
-            while True:
-                inc_data = conn.recv(NUMBER_OF_BYTES)
-                data = pickle.loads(inc_data)
-                logger("Reader1 successfully received data from replicatorReceiver.")
-                add_lista = data.add_list
-                update_lista = data.update_list
-
-                # upisivanje vrednosti u tabelu iz add_list-e
-                logger("Reader1 started reading data from add_list.")
-                for cdx in add_lista:
-                    id_add = cdx.getId()
-                    dataset_add = cdx.getDataset()
-                    hc_add = cdx.getHistoricalCollection().getNiz()
-                    for cdy in hc_add:
-                        code_add = cdy.getCode()
-                        value_add = cdy.getValue()
-                        insert_process(connection, id_add, dataset_add, code_add, value_add)
-
-                # upisivanje vrednosti u tabelu iz update_list-e
-                logger("Reader1 started reading data from update_list.")
-                for cdx in update_lista:
-                    id_update = cdx.getId()
-                    dataset_update = cdx.getDataset()
-                    hc_update = cdx.getHistoricalCollection().getNiz()
-                    for cdy in hc_update:
-                        code_update = cdy.getCode()
-                        value_update = cdy.getValue()
-                        insert_process(connection, id_update, dataset_update, code_update, value_update)
+        print(f"Reader1: Replicator receiver connected from {addr}")
+        logger("ReplicatorReceiver successfully connected to Reader1.")
+        
+        inc_data = conn.recv(NUMBER_OF_BYTES)
+        data = pickle.loads(inc_data)
+        logger("Reader1 successfully received data from replicatorReceiver.")
+        add_lista = data.add_list
+        update_lista = data.update_list
+        # upisivanje vrednosti u tabelu iz add_list-e
+        logger("Reader1 started reading data from add_list.")
+        for cdx in add_lista:
+            id_add = cdx.getId()
+            dataset_add = cdx.getDataset()
+            hc_add = cdx.getHistoricalCollection().getNiz()
+            for cdy in hc_add:
+                code_add = cdy.getCode()
+                value_add = cdy.getValue()
+                if counter != 10:
+                    insert_process(connection, id_add, dataset_add, code_add, value_add)
+                    counter += 1
+                else:
+                    counter = 0
+                    break
+                
+        # upisivanje vrednosti u tabelu iz update_list-e
+        logger("Reader1 started reading data from update_list.")
+        for cdx in update_lista:
+            id_update = cdx.getId()
+            dataset_update = cdx.getDataset()
+            hc_update = cdx.getHistoricalCollection().getNiz()
+            for cdy in hc_update:
+                code_update = cdy.getCode()
+                value_update = cdy.getValue()
+                if counter != 10:
+                    insert_process(connection, id_update, dataset_update, code_update, value_update)
+                    counter += 1
+                else:
+                    counter = 0
+                    break
