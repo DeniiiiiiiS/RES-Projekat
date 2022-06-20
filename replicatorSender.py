@@ -11,7 +11,7 @@ MAX_BROJ_WRITERA = 10
 BROJ_BAJTOVA_KOJI_SE_PRIMA = 1000
 HOST = "127.0.0.1"
 PORT1 = 8001;   PORT2 = 8002;
-INTERVAL_SLANJA = 120    #U SEKUNDAMA IZRAZENO
+INTERVAL_SLANJA = 5    #U SEKUNDAMA IZRAZENO
 
 cd1 = CollectionDescription.CollectionDescription(1, "neki_data_set")
 cd2 = CollectionDescription.CollectionDescription(2, "neki_data_set")
