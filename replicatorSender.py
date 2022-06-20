@@ -1,7 +1,7 @@
 import socket, pickle
 import time
 from tracemalloc import start
-import receiverProperty, historicalCollection, collectionDescription, codovi
+import receiverProperty, historicalCollection, CollectionDescription, codovi
 import threading
 
 
@@ -9,12 +9,12 @@ MAX_BROJ_WRITERA = 10
 BROJ_BAJTOVA_KOJI_SE_PRIMA = 1000
 HOST = "127.0.0.1"
 PORT1 = 8001;   PORT2 = 8002;
-INTERVAL_SLANJA = 120    #U SEKUNDAMA IZRAZENO
+INTERVAL_SLANJA = 5    #U SEKUNDAMA IZRAZENO
 
-cd1 = collectionDescription.CollectionDescription(1, "neki_data_set")
-cd2 = collectionDescription.CollectionDescription(2, "neki_data_set")
-cd3 = collectionDescription.CollectionDescription(3, "neki_data_set")
-cd4 = collectionDescription.CollectionDescription(4, "neki_data_set")
+cd1 = CollectionDescription.CollectionDescription(1, 1)
+cd2 = CollectionDescription.CollectionDescription(2, 2)
+cd3 = CollectionDescription.CollectionDescription(3, 3)
+cd4 = CollectionDescription.CollectionDescription(4, 4)
 
 buffer = []
 buffer.append(cd1); buffer.append(cd2); buffer.append(cd3); buffer.append(cd4); 
