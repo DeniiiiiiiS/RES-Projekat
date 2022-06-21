@@ -18,10 +18,6 @@ address2 = (HOST, PORT2)
 address3 = (HOST, PORT3)
 address4 = (HOST, PORT4)
 
-codeOneCounter = 0
-codeTwoCounter = 0
-codeThreeCounter = 0
-codeFourCounter = 0
 
 buffer = []
 delta_cd = []
@@ -128,7 +124,7 @@ while True:
     if(len(delta_cd4.add_list) + len(delta_cd4.update_list) == 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address4)
-                msg = pickle.dumps(delta_cd1)  
+                msg = pickle.dumps(delta_cd4)  
                 replicatorReceiverClient.send(msg)
                 logger("Uspesno poslani podaci na Reader 4!")
                 delta_cd4.add_list.clear()

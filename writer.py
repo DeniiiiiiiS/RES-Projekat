@@ -39,13 +39,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print("Enter desired Value:")
                 value = input()
 
-                if code.isdigit() == False:
-                    print("Code must be integer between 1 and 8")
-                    logger("Uneta nevalidna vrednost za kod: non-integer")
-                    break
                 if int(code) == -1 or value == "END":
                     print("Zaustavljanje writera...")
                     logger("Uneta vrednost za zaustavljanje rada writera")
+                    break
+                if code.isdigit() == False:
+                    print("Code must be integer between 1 and 8")
+                    logger("Uneta nevalidna vrednost za kod: non-integer")
                     break
 
                 if int(code) >= 1 and int(code) <= 8:
