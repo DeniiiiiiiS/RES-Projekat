@@ -15,6 +15,10 @@ def logger(message):
         return log
 
 
+def get_fetchall(mycursor):
+    return mycursor.fetchall()
+
+
 # kreiranje DATABASE database_reader ako ne postoji
 def connect_to_database():
     sqldb = mysql.connector.connect(
@@ -80,12 +84,14 @@ def insert_process(id_data, dataset, code_number, value):
 
 # funkcija koja proverava deadband uslov
 def check_deadband(id_data, dataset, code, value):
+    message = "Reader1 successfully executed function: [check_deadband]."
     mycursor = connection.cursor()
     mycursor.execute(f"select value from tabledata1 where code = '{code}'")
-    myresult = mycursor.fetchall()
+    # myresult = mycursor.fetchall()
+    myresult = get_fetchall(mycursor)
     if not myresult:
         print("Reader1: Code does not exist in table, inserting data")
-        logger("Reader1 successfully executed function: [check_deadband].")
+        logger(message)
         return insert(id_data, dataset, code, value)
     i = 0
     for row in myresult:
@@ -94,10 +100,10 @@ def check_deadband(id_data, dataset, code, value):
     if i == myresult.__len__():
         print(f"Reader1: Difference between {value} and values in database is "
               f"greater than 2%, inserting data into table tabledata1")
-        logger("Reader1 successfully executed function: [check_deadband].")
+        logger(message)
         return insert(id_data, dataset, code, value)
     else:
-        logger("Reader1 successfully executed function: [check_deadband].")
+        logger(message)
         return print("Reader1: No insertion, difference between values is less than 2%")
 
 
@@ -156,10 +162,6 @@ def mydb_connection(host_name, user_name, user_password):
     except Error as e:
         print(f"The error '{e}' occurred")
     return connect
-
-
-def get_fetchall():
-    return connection.cursor().fetchall()
 
 
 connection = mydb_connection("localhost", "root", "root")

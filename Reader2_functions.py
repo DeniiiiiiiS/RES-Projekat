@@ -76,12 +76,13 @@ def insert_process(id_data, dataset, code_number, value):
 
 # funkcija koja proverava deadband uslov
 def check_deadband(id_data, dataset, code, value):
+    message = "Reader2 successfully executed function: [check_deadband]."
     mycursor = connection.cursor()
     mycursor.execute(f"select value from tabledata2 where code = '{code}'")
     myresult = mycursor.fetchall()
     if not myresult:
         print("Reader2: Code does not exist in table, inserting data")
-        logger("Reader2 successfully executed function: [check_deadband].")
+        logger(message)
         return insert(id_data, dataset, code, value)
     i = 0
     for row in myresult:
@@ -90,10 +91,10 @@ def check_deadband(id_data, dataset, code, value):
     if i == myresult.__len__():
         print(f"Reader2: Difference between {value} and values in database is "
               f"greater than 2%, inserting data into table tabledata2")
-        logger("Reader2 successfully executed function: [check_deadband].")
+        logger(message)
         return insert(id_data, dataset, code, value)
     else:
-        logger("Reader2 successfully executed function: [check_deadband].")
+        logger(message)
         return print("Reader2: No insertion, difference between values is less than 2%")
 
 
