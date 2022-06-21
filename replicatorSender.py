@@ -13,10 +13,10 @@ HOST = "127.0.0.1"
 PORT1 = 8001;   PORT2 = 8002;
 INTERVAL_SLANJA = 5    #U SEKUNDAMA IZRAZENO
 
-cd1 = CollectionDescription.CollectionDescription(1, "neki_data_set")
-cd2 = CollectionDescription.CollectionDescription(2, "neki_data_set")
-cd3 = CollectionDescription.CollectionDescription(3, "neki_data_set")
-cd4 = CollectionDescription.CollectionDescription(4, "neki_data_set")
+cd1 = CollectionDescription.CollectionDescription(1, 1)
+cd2 = CollectionDescription.CollectionDescription(2, 2)
+cd3 = CollectionDescription.CollectionDescription(3, 3)
+cd4 = CollectionDescription.CollectionDescription(4, 4)
 
 buffer = []
 buffer.append(cd1); buffer.append(cd2); buffer.append(cd3); buffer.append(cd4); 
