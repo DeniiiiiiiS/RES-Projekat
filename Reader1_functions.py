@@ -52,15 +52,22 @@ def create_table():
 
 # funkcija koja proverava da li je code code_digital
 def insert_process(id_data, dataset, code_number, value):
+    if not isinstance(code_number, int):
+        print("Reader1: Code is not integer!")
+        return "Code is not integer!"
+    elif code_number != 1 and code_number != 2:
+        print("Reader1: Code is not in range 1:2!")
+        return "Code is not in range 1:2"
     code = codovi.Code(code_number).name
     if not isinstance(id_data, int):
-        return print("Reader1: ID is not valid!")
+        print("Reader1: ID is not valid!")
+        return "ID is not valid!"
     elif value >= 2147483647 or value <= -2147483648:
-        return print("Reader1: Value is not valid!")
+        print("Reader1: Value is not valid!")
+        return "Value is not valid!"
     elif dataset != 1:
-        return print("Reader1: Dataset is not valid!")
-    elif code != 'CODE_DIGITAL' and code != 'CODE_ANALOG':
-        return print("Reader1: Code is not valid!")
+        print("Reader1: Dataset is not valid!")
+        return "Dataset is not valid!"
     elif code == 'CODE_DIGITAL':
         print(f"Reader1: Code is '{code}', inserting data into table tabledata1")
         logger("Reader1 successfully executed function: [insert_process].")
@@ -102,7 +109,8 @@ def insert(id_data, dataset, code, value):
         f"values ({id_data}, {dataset}, '{code}', {value}, now())")
     connection.commit()
     logger("Reader1 successfully executed function: [insert].")
-    return sleep(1)
+    sleep(1)
+    return "Inserted successfully!"
 
 
 # funkcija za dobavljanje poslednje vrednosti za izabrani code
@@ -148,6 +156,10 @@ def mydb_connection(host_name, user_name, user_password):
     except Error as e:
         print(f"The error '{e}' occurred")
     return connect
+
+
+def get_fetchall():
+    return connection.cursor().fetchall()
 
 
 connection = mydb_connection("localhost", "root", "root")

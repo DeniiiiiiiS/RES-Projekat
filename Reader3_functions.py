@@ -52,15 +52,22 @@ def create_table():
 
 # funkcija koja vrsi provere
 def insert_process(id_data, dataset, code_number, value):
+    if not isinstance(code_number, int):
+        print("Reader3: Code is not integer!")
+        return "Code is not integer!"
+    elif code_number != 5 and code_number != 6:
+        print("Reader3: Code is not in range 5:6!")
+        return "Code is not in range 5:6"
     code = codovi.Code(code_number).name
     if not isinstance(id_data, int):
-        return print("Reader3: ID is not valid!")
+        print("Reader3: ID is not valid!")
+        return "ID is not valid!"
     elif value >= 2147483647 or value <= -2147483648:
-        return print("Reader3: Value is not valid!")
+        print("Reader3: Value is not valid!")
+        return "Value is not valid!"
     elif dataset != 3:
-        return print("Reader3: Dataset is not valid!")
-    elif code != 'CODE_SINGLENODE' and code != 'CODE_MULTIPLENODE':
-        return print("Reader3: Code is NOT valid!")
+        print("Reader3: Dataset is not valid!")
+        return "Dataset is not valid!"
     else:
         print(f"Reader3: Checking deadband for code[{code}]...")
         logger("Reader3 successfully executed function: [insert_process].")
@@ -98,7 +105,8 @@ def insert(id_data, dataset, code, value):
         f"values ({id_data}, {dataset}, '{code}', {value}, now())")
     connection.commit()
     logger("Reader3 successfully executed function: [insert].")
-    return sleep(1)
+    sleep(1)
+    return "Inserted successfully!"
 
 
 # funkcija za dobavljanje poslednje vrednosti za izabrani code
