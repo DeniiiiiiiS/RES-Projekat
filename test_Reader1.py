@@ -3,7 +3,6 @@ import random
 import unittest
 from time import localtime
 from unittest.mock import patch, Mock
-
 from Reader1_functions import logger, check_deadband
 from Reader1_functions import insert_process
 
@@ -80,10 +79,21 @@ class TestInsertProcess(unittest.TestCase):
 
 # test za check_deadband
 class TestCheckDeadband(unittest.TestCase):
+    @patch('Reader1_functions.get_fetchall')
     @patch('Reader1_functions.insert')
-    def test_check_doesnt_exist(self, mock_insert):
+    def test_check_doesnt_exist(self, mock_insert, mock_get_fetchall):
         mock_insert.return_value = "INSERT"
-        self.assertEqual(check_deadband(1, 1, 'CODE_DIGITAL', 100), None)
+        mock_get_fetchall.return_value = None
+        self.assertEqual(check_deadband(1, 1, 'CODE_DIGITAL', 100), "INSERT")
+
+
+#class TestCheckDeadband2(unittest.TestCase):
+#    @patch('Reader1_functions.get_fetchall')
+#    @patch('Reader1_functions.insert')
+#    def test_check_does_exist(self, mock_insert, mock_get_fetchall):
+#        mock_insert.return_value = "INSERT"
+#        mock_get_fetchall.return_value = None
+#        self.assertEqual(check_deadband(1, 1, 'CODE_DIGITAL', 100), "INSERT")
 
 
 if __name__ == '__main__':
