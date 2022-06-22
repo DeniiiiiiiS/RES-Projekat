@@ -2,8 +2,8 @@ import random
 import unittest
 from time import localtime
 from unittest.mock import patch
-from Reader1_functions import logger, check_deadband, insert, get_last_value_for_code1, read_values_by_code1
-from Reader1_functions import insert_process
+from Reader4_functions import logger, check_deadband, insert, get_last_value_for_code4, read_values_by_code4
+from Reader4_functions import insert_process
 
 
 class TestLogger(unittest.TestCase):
@@ -38,113 +38,113 @@ class TestLogger(unittest.TestCase):
 
 # testovi za insert_process
 class TestInsertProcess(unittest.TestCase):
-    @patch('Reader1_functions.insert')
-    def test_process__good__code_digital(self, mock_insert):
-        mock_insert.return_value = "Ulazi dalje u insert"
-        self.assertEqual(insert_process(1, 1, 2, 100), mock_insert.return_value)
+    @patch('Reader4_functions.check_deadband')
+    def test_process__good__code_consumer(self, mock_check):
+        mock_check.return_value = "Ulazi dalje u check_deadband"
+        self.assertEqual(insert_process(4, 4, 7, 100), mock_check.return_value)
 
-    @patch('Reader1_functions.check_deadband')
-    def test_process__good__code_analog(self, mock_check_deadband):
+    @patch('Reader4_functions.check_deadband')
+    def test_process__good__code_source(self, mock_check_deadband):
         mock_check_deadband.return_value = "Ulazi dalje u check_deadband"
-        self.assertEqual(insert_process(1, 1, 1, 100), mock_check_deadband.return_value)
+        self.assertEqual(insert_process(4, 4, 8, 100), mock_check_deadband.return_value)
 
     def test_process_bad_id(self):
-        self.assertEqual(insert_process("not int", 1, 1, 100), "ID is not valid!")
+        self.assertEqual(insert_process("not int", 4, 7, 100), "ID is not valid!")
 
     def test_process_bad_id2(self):
-        self.assertEqual(insert_process(None, 1, 1, 100), "ID is not valid!")
+        self.assertEqual(insert_process(None, 4, 8, 100), "ID is not valid!")
 
     def test_process_bad_id3(self):
-        self.assertEqual(insert_process(1.33, 1, 1, 100), "ID is not valid!")
+        self.assertEqual(insert_process(1.33, 4, 7, 100), "ID is not valid!")
 
     def test_process_bad_value(self):
-        self.assertEqual(insert_process(1, 1, 1, 214748364799), "Value is not valid!")
+        self.assertEqual(insert_process(4, 4, 8, 214748364799), "Value is not valid!")
 
     def test_process_bad_value2(self):
-        self.assertEqual(insert_process(1, 1, 1, -214748364799), "Value is not valid!")
+        self.assertEqual(insert_process(4, 4, 7, -214748364799), "Value is not valid!")
 
     def test_process_bad_dataset(self):
-        self.assertEqual(insert_process(1, 2, 1, 100), "Dataset is not valid!")
+        self.assertEqual(insert_process(4, 6, 8, 100), "Dataset is not valid!")
 
     def test_process_bad_dataset2(self):
-        self.assertEqual(insert_process(1, None, 1, 100), "Dataset is not valid!")
+        self.assertEqual(insert_process(4, None, 7, 100), "Dataset is not valid!")
 
     def test_process_bad_code(self):
-        self.assertEqual(insert_process(1, 1, 3, 100), "Code is not in range 1:2")
+        self.assertEqual(insert_process(4, 4, 2, 100), "Code is not in range 7:8")
 
     def test_process_bad_code2(self):
-        self.assertEqual(insert_process(1, 1, None, 100), "Code is not integer!")
+        self.assertEqual(insert_process(4, 4, None, 100), "Code is not integer!")
 
 
 # testovi za check_deadband
 class TestCheckDeadband(unittest.TestCase):
-    @patch('Reader1_functions.get_fetchall')
-    @patch('Reader1_functions.insert')
+    @patch('Reader4_functions.get_fetchall')
+    @patch('Reader4_functions.insert')
     def test_check_doesnt_exist(self, mock_insert, mock_get_fetchall):
         mock_insert.return_value = "INSERT"
         mock_get_fetchall.return_value = None
-        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), "INSERT")
+        self.assertEqual(check_deadband(4, 4, 'CODE_CONSUMER', 100), "INSERT")
 
-    @patch('Reader1_functions.get_fetchall')
-    @patch('Reader1_functions.insert')
+    @patch('Reader4_functions.get_fetchall')
+    @patch('Reader4_functions.insert')
     def test_check_does_exist(self, mock_insert, mock_get_fetchall):
         mock_insert.return_value = "INSERT"
         mock_get_fetchall.return_value = [(10000,)]
         # namerno 10000 da bi razlika bila veca od 2%
-        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), "INSERT")
+        self.assertEqual(check_deadband(4, 4, 'CODE_SOURCE', 100), "INSERT")
 
-    @patch('Reader1_functions.get_fetchall')
-    @patch('Reader1_functions.insert')
+    @patch('Reader4_functions.get_fetchall')
+    @patch('Reader4_functions.insert')
     def test_check_no_insert(self, mock_insert, mock_get_fetchall):
         mock_insert.return_value = "INSERT"
         mock_get_fetchall.return_value = [(100,)]
         # namerno 100 da bi razlika bila tacno 0 sto je manje od 2%
-        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), None)
+        self.assertEqual(check_deadband(4, 4, 'CODE_SOURCE', 100), None)
 
 
 # testovi za insert
 class TestInsert(unittest.TestCase):
     def test_insert1(self):
-        self.assertEqual(insert(1, 1, 'CODE_ANALOG', 100), "Inserted successfully!")
+        self.assertEqual(insert(4, 4, 'CODE_CONSUMER', 10000), "Inserted successfully!")
 
     def test_insert2(self):
-        self.assertEqual(insert(1, 1, 'CODE_DIGITAL', 100), "Inserted successfully!")
+        self.assertEqual(insert(4, 4, 'CODE_SOURCE', 10000), "Inserted successfully!")
 
 
 class TestGetLast(unittest.TestCase):
     def test_code_not_int(self):
-        self.assertEqual(get_last_value_for_code1(None), "Code is not integer!")
+        self.assertEqual(get_last_value_for_code4(None), "Code is not integer!")
 
-    def test_code_not_1or2(self):
-        self.assertEqual(get_last_value_for_code1(3), "Code is not in range 1:2!")
+    def test_code_not_7or8(self):
+        self.assertEqual(get_last_value_for_code4(6), "Code is not in range 7:8!")
 
-    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader4_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
         mock_get_fetchall.return_value = None
-        self.assertEqual(get_last_value_for_code1(1), "Code doesnt exist")
+        self.assertEqual(get_last_value_for_code4(7), "Code doesnt exist")
 
-    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader4_functions.get_fetchall')
     def test_code_exists(self, mock_get_fetchall):
-        mock_get_fetchall.return_value = [(1, 1, 'CODE_DIGITAL', 10000, (2022, 6, 21, 13, 26, 3))]
-        self.assertEqual(get_last_value_for_code1(1), "Exists, printed")
+        mock_get_fetchall.return_value = [(4, 4, 'CODE_SOURCE', 10000, (2022, 6, 21, 13, 26, 3))]
+        self.assertEqual(get_last_value_for_code4(8), "Exists, printed")
 
 
 class TestReadValues(unittest.TestCase):
     def test_code_not_int(self):
-        self.assertEqual(read_values_by_code1(None), "Code is not integer!")
+        self.assertEqual(read_values_by_code4(None), "Code is not integer!")
 
-    def test_code_not_1or2(self):
-        self.assertEqual(read_values_by_code1(3), "Code is not in range 1:2!")
+    def test_code_not_7or8(self):
+        self.assertEqual(read_values_by_code4(4), "Code is not in range 7:8!")
 
-    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader4_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
         mock_get_fetchall.return_value = None
-        self.assertEqual(get_last_value_for_code1(1), "Code doesnt exist")
+        self.assertEqual(get_last_value_for_code4(7), "Code doesnt exist")
 
-    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader4_functions.get_fetchall')
     def test_code_exists(self, mock_get_fetchall):
-        mock_get_fetchall.return_value = [(1, 1, 'CODE_DIGITAL', 10000, (2022, 6, 21, 13, 26, 3))]
-        self.assertEqual(get_last_value_for_code1(1), "Exists, printed")
+        mock_get_fetchall.return_value = [(2, 2, 'CODE_CONSUMER', 10000, (2022, 6, 21, 13, 26, 3))]
+        self.assertEqual(get_last_value_for_code4(7), "Exists, printed")
 
 
 if __name__ == '__main__':
