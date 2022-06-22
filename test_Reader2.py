@@ -1,10 +1,13 @@
-import random
 import unittest
 from time import localtime
 from unittest.mock import patch
 from Reader2_functions import logger, check_deadband, insert, get_last_value_for_code2, read_values_by_code2
 from Reader2_functions import insert_process, create_table, connect_to_database
 
+id_err = "ID is not valid!"
+value_err = "Value is not valid!"
+code_err = "Code is not in range 3:4!"
+int_err = "Code is not integer!"
 
 class TestLogger(unittest.TestCase):
     def test_logger_characters(self):
@@ -16,7 +19,7 @@ class TestLogger(unittest.TestCase):
 
     def test_logger_numbers(self):
         time_now = localtime()
-        message = random.random()
+        message = 1000
         self.assertEqual(logger(message), f"{time_now.tm_mday}.{time_now.tm_mon}.{time_now.tm_year}, "
                                           f"{time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}"
                                           f" -> {message}\n")
@@ -49,19 +52,19 @@ class TestInsertProcess(unittest.TestCase):
         self.assertEqual(insert_process(2, 2, 4, 100), mock_check_deadband.return_value)
 
     def test_process_bad_id(self):
-        self.assertEqual(insert_process("not int", 2, 3, 100), "ID is not valid!")
+        self.assertEqual(insert_process("not int", 2, 3, 100), id_err)
 
     def test_process_bad_id2(self):
-        self.assertEqual(insert_process(None, 2, 3, 100), "ID is not valid!")
+        self.assertEqual(insert_process(None, 2, 3, 100), id_err)
 
     def test_process_bad_id3(self):
-        self.assertEqual(insert_process(1.33, 2, 3, 100), "ID is not valid!")
+        self.assertEqual(insert_process(1.33, 2, 3, 100), id_err)
 
     def test_process_bad_value(self):
-        self.assertEqual(insert_process(2, 2, 3, 214748364799), "Value is not valid!")
+        self.assertEqual(insert_process(2, 2, 3, 214748364799), value_err)
 
     def test_process_bad_value2(self):
-        self.assertEqual(insert_process(2, 2, 4, -214748364799), "Value is not valid!")
+        self.assertEqual(insert_process(2, 2, 4, -214748364799), value_err)
 
     def test_process_bad_dataset(self):
         self.assertEqual(insert_process(2, 6, 3, 100), "Dataset is not valid!")
@@ -70,10 +73,10 @@ class TestInsertProcess(unittest.TestCase):
         self.assertEqual(insert_process(2, None, 4, 100), "Dataset is not valid!")
 
     def test_process_bad_code(self):
-        self.assertEqual(insert_process(2, 2, 8, 100), "Code is not in range 3:4!")
+        self.assertEqual(insert_process(2, 2, 8, 100), code_err)
 
     def test_process_bad_code2(self):
-        self.assertEqual(insert_process(2, 2, None, 100), "Code is not integer!")
+        self.assertEqual(insert_process(2, 2, None, 100), int_err)
 
 
 # testovi za check_deadband
@@ -113,10 +116,10 @@ class TestInsert(unittest.TestCase):
 
 class TestGetLast(unittest.TestCase):
     def test_code_not_int(self):
-        self.assertEqual(get_last_value_for_code2(None), "Code is not integer!")
+        self.assertEqual(get_last_value_for_code2(None), int_err)
 
     def test_code_not_3or4(self):
-        self.assertEqual(get_last_value_for_code2(7), "Code is not in range 3:4!")
+        self.assertEqual(get_last_value_for_code2(7), code_err)
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
@@ -134,10 +137,10 @@ class TestGetLast(unittest.TestCase):
 
 class TestReadValues(unittest.TestCase):
     def test_code_not_int(self):
-        self.assertEqual(read_values_by_code2(None), "Code is not integer!")
+        self.assertEqual(read_values_by_code2(None), int_err)
 
     def test_code_not_3or4(self):
-        self.assertEqual(read_values_by_code2(5), "Code is not in range 3:4!")
+        self.assertEqual(read_values_by_code2(5), code_err)
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
