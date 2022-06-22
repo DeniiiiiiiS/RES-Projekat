@@ -8,7 +8,7 @@
 - dva soketa se koriste, jedan klijentski i jedan serverski
 -  klijentski socket prima podatke od vrajtera, serverski soket salje podatke receiveru
 ## Reader komponenta
-Reader komponenta sluzi da uspostavi konekciju sa Replicator Receiver komponentom, primi od nje podatke i trajno ih sacuva u bazu podataka.
+Reader komponenta služi da uspostavi konekciju sa Replicator Receiver komponentom, primi od nje podatke i trajno ih sačuva u bazu podataka.
 Postoji 4 Reader-a od kojih svaki radi sa svojom tabelom u bazi podataka.
 - Reader1
   - Radi sa dataset-om 1 i kodovima CODE_ANALOG[1] i CODE_DIGITAL[2]
@@ -31,24 +31,24 @@ Izgled tabele:
 Reader komponente koriste funkcije iz fajlova reader_functions koje služe za proveru pristiglih podataka, upis u bazu, i pribavljanje podataka iz baze.
 Funkcije koje Reader koristi su:
 - **mydb_connection(host_name, user_name, user_password)**
-  - ova funkcija ima povratnu vrednost <i>connection</i> uz pomoc koje ce se dalje kroz program MySql komande.
-  - pored toga sluzi i za konekciju sa bazom podataka
+  - ova funkcija ima povratnu vrednost <i>connection</i> uz pomoć koje će se dalje kroz program MySql komande.
+  - pored toga služi i za konekciju sa bazom podataka
 - **logger(message)**
   - služi za beleženje svih aktivnosti koje se dešavaju u svakoj od reader-a.
   - za parametar prima poruku koju će ispisati u .txt fajlu zajedno sa vremenom u koje vreme se neka funkcija izvršavala.
 - **connect_to_database()**
-  - sluzi da bi se napravila ako vec ne postoji baza podataka u koju ce se smestati kasnije dobijeni podaci.
+  - služi da bi se napravila ako već ne postoji baza podataka u koju ce se smeštati kasnije dobijeni podaci.
 - **create_table()**
-  - sluzi za pravljenje tabele za svaku od reader-a, ukoliko vec ne postoji.
+  - služi za pravljenje tabele za svaku od reader-a, ukoliko vec ne postoji.
 - **insert_process(id, dataset, code, value)**
   - koristi se na dobijenim podacima kako bi izvrsila proveru i validnost podataka
 - **check_deadband(id, dataset, code, value)**
-  - sluzi za proveru podataka koji vec postoje u bazi sa unetom vrednoscu, ukoliko postoji vec slicna vrednost sa istim kodom, ona se zanemaruje, u suprotnom se salje na upis.
+  - služi za proveru podataka koji već postoje u bazi sa unetom vrednošću, ukoliko postoji vec slična vrednost sa istim kodom, ona se zanemaruje, u suprotnom se šalje na upis.
 - **insert(id, dataset, code, value)**
-  - nakon svih prethodno izvrsenih provera, funkcija insert sluzi za upis podataka (id, dataset, code, value, datetime) u odredjenu tabelu u bazi podataka.
+  - nakon svih prethodno izvršenih provera, funkcija insert služi za upis podataka (id, dataset, code, value, datetime) u određenu tabelu u bazi podataka.
 - **get_last_value_for_code(code)**
   - koristi se kako bi ispisala poslednju unetu vrednost u bazi podataka za uneti kod.
 - **read_values_by_code(code)**
-  - funkcija koja dobavlja i ispisuje sve vrednosti iz tabele za odredjeni Reader za uneti kod. 
+  - funkcija koja dobavlja i ispisuje sve vrednosti iz tabele za određeni Reader za uneti kod. 
 - **get_fetchall(cursor)**
-  - funkcija koja sluzi za skracivanje koda i lakseg testiranja koda 
+  - funkcija koja služi za skraćivanje koda i lakšeg testiranja koda 
