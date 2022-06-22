@@ -147,5 +147,6 @@ class TestReadValues(unittest.TestCase):
         mock_get_fetchall.return_value = [(1, 1, 'CODE_DIGITAL', 10000, (2022, 6, 21, 13, 26, 3))]
         self.assertEqual(get_last_value_for_code1(1), "Exists, printed")
 
+
 if __name__ == '__main__':
     unittest.main()
