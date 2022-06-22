@@ -6,19 +6,19 @@ class CollectionDescription:
         self.data_set = data_set
         self.historical_collection = historicalCollection.HistoricalCollection()
 
-    def dodaj_u_HistoricalCollection(self, cd):
+    def dodaj_u_historical_collection(self, cd):
         self.historical_collection.dodaj(cd)
 
-    def  isprazniHistoricalCollection(self):
+    def  isprazni_historical_collection(self):
         self.historical_collection.isprazni()
 
-    def getId(self):
+    def get_id(self):
         return self.id
 
-    def getDataset(self):
+    def get_dataset(self):
         return self.data_set
 
-    def getHistoricalCollection(self):
+    def get_historical_collection(self):
         return self.historical_collection
         
 

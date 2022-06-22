@@ -2,12 +2,12 @@ import receiverProperty
 
 class HistoricalCollection:
     def  __init__(self):
-        self.nizReceiverProperty = []
+        self.niz_receiver_property = []
 
     def dodaj(self,a):
-        self.nizReceiverProperty.append(a)
+        self.niz_receiver_property.append(a)
     
     def isprazni(self):
-        self.nizReceiverProperty.clear()
-    def getNiz(self):
-        return self.nizReceiverProperty
+        self.niz_receiver_property.clear()
+    def get_niz(self):
+        return self.niz_receiver_property

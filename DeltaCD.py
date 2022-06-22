@@ -7,8 +7,8 @@ class DeltaCD:
         self.add_list = []   # Lista u kojoj se nalaze objekti CD koji trebaju da se dodaju u bazu
         self.update_list = []    # Lista u kojoj se nalaze objekti CD koji trebaju da se azuriraju u bazi
 
-    def dodajNovi(self, cd):
+    def dodaj_novi(self, cd):
         self.add_list.append(cd)
     
-    def azurirajPostojeci(self, cd):
+    def azuriraj_postojeci(self, cd):
         self.update_list.append(cd)
