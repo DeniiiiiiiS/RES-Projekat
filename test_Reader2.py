@@ -3,7 +3,7 @@ import unittest
 from time import localtime
 from unittest.mock import patch
 from Reader2_functions import logger, check_deadband, insert, get_last_value_for_code2, read_values_by_code2
-from Reader2_functions import insert_process, create_table
+from Reader2_functions import insert_process, create_table, connect_to_database
 
 
 class TestLogger(unittest.TestCase):
@@ -120,6 +120,7 @@ class TestGetLast(unittest.TestCase):
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
+        connect_to_database()
         create_table()
         mock_get_fetchall.return_value = None
         self.assertEqual(get_last_value_for_code2(3), "Code doesnt exist")
@@ -141,12 +142,12 @@ class TestReadValues(unittest.TestCase):
     @patch('Reader2_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
         mock_get_fetchall.return_value = None
-        self.assertEqual(get_last_value_for_code2(3), "Code doesnt exist")
+        self.assertEqual(read_values_by_code2(3), "Code doesnt exist")
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_exists(self, mock_get_fetchall):
         mock_get_fetchall.return_value = [(2, 2, 'CODE_LIMITSET', 10000, (2022, 6, 21, 13, 26, 3))]
-        self.assertEqual(get_last_value_for_code2(4), "Exists, printed")
+        self.assertEqual(read_values_by_code2(4), "Exists, printed")
 
 
 if __name__ == '__main__':
