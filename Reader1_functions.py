@@ -56,29 +56,35 @@ def create_table():
 
 # funkcija koja proverava da li je code code_digital
 def insert_process(id_data, dataset, code_number, value):
+    message = "Reader1 successfully executed function: [insert_process]."
     if not isinstance(code_number, int):
         print("Reader1: Code is not integer!")
+        logger(message)
         return "Code is not integer!"
     elif code_number != 1 and code_number != 2:
         print("Reader1: Code is not in range 1:2!")
+        logger(message)
         return "Code is not in range 1:2"
     code = codovi.Code(code_number).name
     if not isinstance(id_data, int):
         print("Reader1: ID is not valid!")
+        logger(message)
         return "ID is not valid!"
     elif value >= 2147483647 or value <= -2147483648:
         print("Reader1: Value is not valid!")
+        logger(message)
         return "Value is not valid!"
     elif dataset != 1:
         print("Reader1: Dataset is not valid!")
+        logger(message)
         return "Dataset is not valid!"
     elif code == 'CODE_DIGITAL':
         print(f"Reader1: Code is '{code}', inserting data into table tabledata1")
-        logger("Reader1 successfully executed function: [insert_process].")
+        logger(message)
         return insert(id_data, dataset, code, value)
     else:
         print("Reader1: Code is NOT [CODE_DIGITAL], checking deadband...")
-        logger("Reader1 successfully executed function: [insert_process].")
+        logger(message)
         return check_deadband(id_data, dataset, code, value)
 
 
@@ -87,7 +93,6 @@ def check_deadband(id_data, dataset, code, value):
     message = "Reader1 successfully executed function: [check_deadband]."
     mycursor = connection.cursor()
     mycursor.execute(f"select value from tabledata1 where code = '{code}'")
-    # myresult = mycursor.fetchall()
     myresult = get_fetchall(mycursor)
     if not myresult:
         print("Reader1: Code does not exist in table, inserting data")
@@ -121,31 +126,55 @@ def insert(id_data, dataset, code, value):
 
 # funkcija za dobavljanje poslednje vrednosti za izabrani code
 def get_last_value_for_code1(code_number):
+    message = "Reader1 successfully executed function: [get_last_value_for_code]."
     mycursor = connection.cursor()
+    if not isinstance(code_number, int):
+        print("Reader1: Code is not integer!")
+        logger(message)
+        return "Code is not integer!"
+    elif code_number != 1 and code_number != 2:
+        print("Reader1: Code is not in range 1:2!")
+        logger(message)
+        return "Code is not in range 1:2!"
     code = codovi.Code(code_number).name
     mycursor.execute(
         f"select * from tabledata1 where date = (select max(date) from tabledata1 where code = '{code}');")
-    myresult = mycursor.fetchall()
+    myresult = get_fetchall(mycursor)
     if not myresult:
         print(f"Reader1: Given code ['{code}'] does not exist in the table")
+        logger(message)
+        return "Code doesnt exist"
     else:
         print(f"Reader1: For CODE: [{myresult[0][2]}], the latest VALUE: [{myresult[0][3]}]")
-    logger("Reader1 successfully executed function: [get_last_value_for_code].")
+        logger(message)
+        return "Exists, printed"
 
 
 # ispis vrednosti za trazeni code
 def read_values_by_code1(code_number):
+    message = "Reader1 successfully executed function: [read_values_by_code]."
+    if not isinstance(code_number, int):
+        print("Reader1: Code is not integer!")
+        logger(message)
+        return "Code is not integer!"
+    elif code_number != 1 and code_number != 2:
+        print("Reader1: Code is not in range 1:2!")
+        logger(message)
+        return "Code is not in range 1:2!"
     code = codovi.Code(code_number).name
     mycursor = connection.cursor()
     mycursor.execute(f"select * from tabledata1 where code = '{code}'")
-    myresult = mycursor.fetchall()
+    myresult = get_fetchall(mycursor)
     if not myresult:
         print(f"Reader1: Given code ['{code}'] does not exist in the table")
+        logger(message)
+        return "Code doesnt exist"
     else:
         print("Reader1: ID |///| DATASET |///| CODE              |///| VALUE |///| DATE       TIME")
         for x in myresult:
             print(f'Reader1: {f"{x[0]}":<9}{f"{x[1]}":<14}{f"{x[2]}":<24}{f"{x[3]}":<12}{f"{x[4]}":<10}')
-    logger("Reader1 successfully executed function: [read_values_by_code].")
+        logger(message)
+        return "Exists, printed"
 
 
 # povezivanje na DATABASE database_reader
@@ -156,7 +185,8 @@ def mydb_connection(host_name, user_name, user_password):
             host=host_name,
             user=user_name,
             passwd=user_password,
-            database="database_reader"
+            database="database_reader",
+            buffered=True
         )
         print("Reader1: Connection to MySQL Database database_reader successful")
     except Error as e:
