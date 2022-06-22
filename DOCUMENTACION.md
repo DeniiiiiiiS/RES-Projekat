@@ -5,13 +5,13 @@
 
 ## Writer komponenta
   Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
-  - 1. Slanje podataka ka bazi podataka
+  - 1 Slanje podataka ka bazi podataka
       - Od korisnika se traži da unese kod i vrednost koju želi da upiše u bazu podataka
-  - 2. Dobijanje poslednje vrednosti za izabrani kod
+  - 2 Dobijanje poslednje vrednosti za izabrani kod
       - Od korisnika se traži da unese kod za koji želi da dobije poslednju vrednost iz baze podataka
-  - 3. Dobijanje svih vrednosti za izabrani kod
+  - 3 Dobijanje svih vrednosti za izabrani kod
       - Od korisnika se traži da unese kod za koji želi da dobije sve vrednosti iz baze podataka
-  - 4. Izlaz iz programa
+  - 4 Izlaz iz programa
       - Odabirom ove opcije, program se zatvara 
 
 ## Replicator sender komponenta
@@ -21,7 +21,7 @@
 -  klijentski socket prima podatke od vrajtera, serverski soket salje podatke receiveru
 
 ## Replicator Receiver komponenta
-  Replicator Receiver komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom, od koje prima CollectionDescription objekat, i sa Reader komponentama u zavisnosti od ispunjenosti određenog uslova. 
+  Replicator Receiver komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom, od koje prima CollectionDescription objekat, i sa Reader komponentama u zavisnosti od ispunjenosti određenog uslova kojima šalje DeltaCD objekat. 
 
   Nakon što Receiver primi objekat, potrebno je da prođe kroz njegove atribute, i izvuče kod. Na osnovu koda, će se manipulisati sa listama add i update i to tako što će kad prvi put primi neki kod, njega staviti u add listu, a svaki naredni put u update listu.
   Pošto je raspored kodova po datasetovima već određen u prethodnoj komponenti, samo će se nadovezati te CollectionDescription1 (CD1) će se prepakovati u DeltaCD1 (DCD1) i takav poslati Reader1 komponenti. CD2 će biti prepakovan u DCD2 i poslaće se Reader2 komponenti. Na isti način će biti odrađeno za datasetove tri i četiri.
@@ -81,3 +81,43 @@ Funkcije koje Reader koristi su:
   - funkcija koja dobavlja i ispisuje sve vrednosti iz tabele za određeni Reader za uneti kod. 
 - **get_fetchall(cursor)**
   - funkcija koja služi za skraćivanje koda i lakšeg testiranja koda 
+
+## Codovi Enumeracija
+
+- U ovom fajlu se nalazi enumeracija za kodove:
+    - CODE_ANALOG = 1
+    - CODE_DIGITAL = 2
+    - CODE_CUSTOM = 3
+    - CODE_LIMITSET = 4
+    - CODE_SINGLENODE = 5
+    - CODE_MULTIPLENODE = 6
+    - CODE_CONSUMER = 7
+    - CODE_SOURCE = 8
+
+## ReceiverProperty klasa
+- Klasa sadrži polja Code i Value
+- Propertiji koji su implementirani:
+  - get_code() - vraća kod datog objekta
+  - get_value() - vraća vrednost datog objekta
+
+## HistoricalCollection klasa
+- Klasa sadrži niz ReceiverProperty-ja
+- Metode koje su implementirane:
+  - dodaj(a) - dodaje prosleđeni parametar a u niz
+  - isprazni() - prazni niz
+  - get_niz() - vraća niz
+
+## CollectionDescription klasa
+- Klasa sadrži polja id, dataset, historicalCollection objekat
+- Metode koje su implementirane:
+  - get_id() - vraća id za dati objekat klase
+  - get_dataset() - vraća dataset za dati objekat klase
+  - get_historical_collection() - vraća historicalCollection objekat za dati objekat klase
+  - dodaj_u_historical_collection(cd) - poziva metodu dodaj iz HistoricalCollection klase kojoj prosleđuje cd kao parametar
+  - isprazni_historical_collection() - poziva metodu isprazni iz HistoricalCollection klase
+
+## DeltaCD klasa
+- Klasa sadrži polja add_list i update_list
+- Metode koje su implementirane:
+  - dodaj_novi(cd) - prosleđeni objekat cd dodaje u svoju add listu
+  - azuriraj_postojeci(cd) - prosleđeni objekat cd dodaje u svoju update listu
