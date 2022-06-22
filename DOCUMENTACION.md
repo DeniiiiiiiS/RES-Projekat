@@ -5,22 +5,37 @@
 
 ## Writer komponenta
   Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
-    1. Slanje podataka ka bazi podataka
+  - 1. Slanje podataka ka bazi podataka
       - Od korisnika se traži da unese kod i vrednost koju želi da upiše u bazu podataka
-    2. Dobijanje poslednje vrednosti za izabrani kod
+  - 2. Dobijanje poslednje vrednosti za izabrani kod
       - Od korisnika se traži da unese kod za koji želi da dobije poslednju vrednost iz baze podataka
-    3. Dobijanje svih vrednosti za izabrani kod
+  - 3. Dobijanje svih vrednosti za izabrani kod
       - Od korisnika se traži da unese kod za koji želi da dobije sve vrednosti iz baze podataka
-    4. Izlaz iz programa
-      - Odabirom ove opcije, program se zatvara
-  
-
+  - 4. Izlaz iz programa
+      - Odabirom ove opcije, program se zatvara 
 
 ## Replicator sender komponenta
 - vise vrajtera istovremeno moze uspotaviti konekciju ka senderu
 - na svakih 90 sekundi salje podatke replicator receiveru
 - dva soketa se koriste, jedan klijentski i jedan serverski
 -  klijentski socket prima podatke od vrajtera, serverski soket salje podatke receiveru
+
+## Replicator Receiver komponenta
+  Replicator Receiver komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom, od koje prima CollectionDescription objekat, i sa Reader komponentama u zavisnosti od ispunjenosti određenog uslova. 
+
+  Nakon što Receiver primi objekat, potrebno je da prođe kroz njegove atribute, i izvuče kod. Na osnovu koda, će se manipulisati sa listama add i update i to tako što će kad prvi put primi neki kod, njega staviti u add listu, a svaki naredni put u update listu.
+  Pošto je raspored kodova po datasetovima već određen u prethodnoj komponenti, samo će se nadovezati te CollectionDescription1 (CD1) će se prepakovati u DeltaCD1 (DCD1) i takav poslati Reader1 komponenti. CD2 će biti prepakovan u DCD2 i poslaće se Reader2 komponenti. Na isti način će biti odrađeno za datasetove tri i četiri.
+
+  Funkcije koje Receiver koristi:
+  - **check(delt)**
+    - kao parametar prima objekat DeltaCD
+    - služi za proveru ispunjenosti uslova da je suma brojeva kodova u listama add i update jednaka 10
+    - kao povratnu vrednost vraća True ili False
+  - **send(i)**
+    - kao parametar prima broj od 1 do 4
+    - poziva metodu check kojoj prosleđuje jedan od objekata deltaCD zavisno od parametra i
+    - uspostavlja konekciju ka Reader[1-4] komponenti i šalje deltaCD[1-4] objekat
+
 ## Reader komponenta
 Reader komponenta služi da uspostavi konekciju sa Replicator Receiver komponentom, primi od nje podatke i trajno ih sačuva u bazu podataka.
 Postoji 4 Reader-a od kojih svaki radi sa svojom tabelom u bazi podataka.
