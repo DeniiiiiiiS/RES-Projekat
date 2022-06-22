@@ -180,18 +180,14 @@ def read_values_by_code4(code_number):
 
 # povezivanje na DATABASE database_reader
 def mydb_connection(host_name, user_name, user_password):
-    connect = None
-    try:
-        connect = mysql.connector.connect(
-            host=host_name,
-            user=user_name,
-            passwd=user_password,
-            database="database_reader",
-            buffered=True
-        )
-        print("Reader4: Connection to MySQL Database database_reader successful")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+    connect = mysql.connector.connect(
+        host=host_name,
+        user=user_name,
+        passwd=user_password,
+        database="database_reader",
+        buffered=True
+    )
+    print("Reader4: Connection to MySQL Database database_reader successful")
     return connect
 
 

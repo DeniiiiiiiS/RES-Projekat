@@ -3,7 +3,7 @@ import unittest
 from time import localtime
 from unittest.mock import patch
 from Reader2_functions import logger, check_deadband, insert, get_last_value_for_code2, read_values_by_code2
-from Reader2_functions import insert_process
+from Reader2_functions import insert_process, create_table
 
 
 class TestLogger(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestInsertProcess(unittest.TestCase):
         self.assertEqual(insert_process(2, None, 4, 100), "Dataset is not valid!")
 
     def test_process_bad_code(self):
-        self.assertEqual(insert_process(2, 2, 8, 100), "Code is not in range 3:4")
+        self.assertEqual(insert_process(2, 2, 8, 100), "Code is not in range 3:4!")
 
     def test_process_bad_code2(self):
         self.assertEqual(insert_process(2, 2, None, 100), "Code is not integer!")
@@ -120,11 +120,13 @@ class TestGetLast(unittest.TestCase):
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_doesnt_exist(self, mock_get_fetchall):
+        create_table()
         mock_get_fetchall.return_value = None
         self.assertEqual(get_last_value_for_code2(3), "Code doesnt exist")
 
     @patch('Reader2_functions.get_fetchall')
     def test_code_exists(self, mock_get_fetchall):
+        create_table()
         mock_get_fetchall.return_value = [(2, 2, 'CODE_CUSTOM', 10000, (2022, 6, 21, 13, 26, 3))]
         self.assertEqual(get_last_value_for_code2(3), "Exists, printed")
 
