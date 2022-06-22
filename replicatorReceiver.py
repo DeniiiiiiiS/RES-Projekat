@@ -67,20 +67,20 @@ while True:
     for delta in delta_cd:
 
 
-        id_iz_buff = buffer[i].getId()
-        dataset_iz_buff = buffer[i].getDataset()
-        for y in buffer[i].getHistoricalCollection().getNiz():
-            code_iz_buff = y.getCode()
+        id_iz_buff = buffer[i].get_id()
+        dataset_iz_buff = buffer[i].get_dataset()
+        for y in buffer[i].get_historical_collection().get_niz():
+            code_iz_buff = y.get_code()
             print(code_iz_buff)
-            value_iz_buff = y.getValue()
+            value_iz_buff = y.get_value()
             print(value_iz_buff)
             if code_iz_buff not in kodovi:
-                delta.dodajNovi(buffer[i])
+                delta.dodaj_novi(buffer[i])
                 kodovi.append(code_iz_buff)
                 print(kodovi)
                 logger("Uspesno dodan novi kod u add listu!")
             else:
-                delta.azurirajPostojeci(buffer[i])
+                delta.azuriraj_postojeci(buffer[i])
                 logger("Uspesno dodan vec postojeci kod u update listu!")
         i += 1
 

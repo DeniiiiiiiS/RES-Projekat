@@ -3,8 +3,8 @@ class ReceiverProperty:
         self.code = code
         self.receiver_value = receiver_value
 
-    def getCode(self):
+    def get_code(self):
         return self.code
 
-    def getValue(self):
+    def get_value(self):
         return self.receiver_value

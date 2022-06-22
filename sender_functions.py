@@ -1,7 +1,7 @@
 import receiverProperty
 import time
 
-def konvertuj_u_ReceiverProperty(data):
+def konvertuj_u_receiver_property(data):
     if data == "":
         return "lose"
     split_karakter = ";"
@@ -14,7 +14,7 @@ def konvertuj_u_ReceiverProperty(data):
     a = receiverProperty.ReceiverProperty(int(c),int(v))
     return a
 
-def Logger(tekst):
+def logger(tekst):
     vreme = time.localtime()
     with open("sender.txt", 'a') as f:
         ispis = f"{vreme.tm_mday}.{vreme.tm_mon}.{vreme.tm_hour}, {vreme.tm_hour}:{vreme.tm_min}:{vreme.tm_sec}, "+tekst+"\n"

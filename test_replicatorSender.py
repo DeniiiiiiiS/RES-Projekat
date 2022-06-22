@@ -1,6 +1,6 @@
 import unittest
-from sender_functions import konvertuj_u_ReceiverProperty
-from sender_functions import Logger
+from sender_functions import konvertuj_u_receiver_property
+from sender_functions import logger
 
 
 
