@@ -3,6 +3,11 @@ from mysql.connector import Error
 from time import localtime, sleep
 import codovi
 
+codenotint = "Code is not integer!"
+message1 = f"Reader3: {codenotint}"
+codenotrange = "Code is not in range 5:6!"
+message2 = f"Reader3: {codenotrange}"
+
 
 def logger(message):
     time_now = localtime()
@@ -58,13 +63,13 @@ def create_table():
 def insert_process(id_data, dataset, code_number, value):
     message = "Reader3 successfully executed function: [insert_process]."
     if not isinstance(code_number, int):
-        print("Reader3: Code is not integer!")
+        print(message1)
         logger(message)
-        return "Code is not integer!"
+        return codenotint
     elif code_number != 5 and code_number != 6:
-        print("Reader3: Code is not in range 5:6!")
+        print(message2)
         logger(message)
-        return "Code is not in range 5:6"
+        return codenotrange
     code = codovi.Code(code_number).name
     if not isinstance(id_data, int):
         print("Reader3: ID is not valid!")
@@ -125,13 +130,13 @@ def get_last_value_for_code3(code_number):
     message = "Reader3 successfully executed function: [get_last_value_for_code]."
     mycursor = connection.cursor()
     if not isinstance(code_number, int):
-        print("Reader3: Code is not integer!")
+        print(message1)
         logger(message)
-        return "Code is not integer!"
+        return codenotint
     elif code_number != 5 and code_number != 6:
-        print("Reader3: Code is not in range 5:6!")
+        print(message2)
         logger(message)
-        return "Code is not in range 5:6!"
+        return codenotrange
     code = codovi.Code(code_number).name
     mycursor.execute(
         f"select * from tabledata3 where date = (select max(date) from tabledata3 where code = '{code}');")
@@ -150,13 +155,13 @@ def get_last_value_for_code3(code_number):
 def read_values_by_code3(code_number):
     message = "Reader3 successfully executed function: [read_values_by_code]."
     if not isinstance(code_number, int):
-        print("Reader3: Code is not integer!")
+        print(message1)
         logger(message)
-        return "Code is not integer!"
+        return codenotint
     elif code_number != 5 and code_number != 6:
-        print("Reader3: Code is not in range 5:6!")
+        print(message2)
         logger(message)
-        return "Code is not in range 5:6!"
+        return codenotrange
     code = codovi.Code(code_number).name
     mycursor = connection.cursor()
     mycursor.execute(f"select * from tabledata3 where code = '{code}'")
