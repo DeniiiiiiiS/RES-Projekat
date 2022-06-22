@@ -1,7 +1,9 @@
-# Dokumentacija
+# Uvod
 - kod je pisan u python programskom jeziku
 - koriscena je klient/server arhitektura sa tcp protokolom
-- korisceni python paketi su socket, pickle, threading, time
+- sastoji se od 4 komponente(writer, replicator sender, replicator receiver, reader)
+- korisceni python paketi su socket, pickle, threading, time, unittest
+- za bazu podataka se koristi MySQL
 
 ## Writer komponenta
   Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
@@ -15,10 +17,35 @@
       - Odabirom ove opcije, program se zatvara 
 
 ## Replicator sender komponenta
-- vise vrajtera istovremeno moze uspotaviti konekciju ka senderu
-- na svakih 90 sekundi salje podatke replicator receiveru
-- dva soketa se koriste, jedan klijentski i jedan serverski
--  klijentski socket prima podatke od vrajtera, serverski soket salje podatke receiveru
+Replicator Sender komponenta prima podatke od writer komponente. Rucno se moze upaliti i gasiti vise writera i istovremeno se mogu slati podaci sa vise writera. Podatak kad se primi od writera se ubacuje u bafer kao jedan objekat klase ReceiverProperty ako je primljen podatak validan. Bufer je niz od 4 ColectionDescription objekata. Sender na svakih 90 sekundi salje podatke iz bufera ka Replicator Receiver komponenti.
+Funkcije ko Sender koristi:
+- **konvertuj_u_receiver_property(data)**
+  - kao parametar prima podatak dboijen od writera
+  - ako je podatak validan kreira odgovarajuci objekat ReceiverProperty klase
+  - za povratnu vrednost vraca taj objekat
+- **logger(tekst)**
+  - kao parametar prima poruku za ispis
+  - upisuje u txt fajl vreme i dogadjaj koju pporuku opisuje
+  - povratna vrednost je ispis kao string
+- **ubaci_u_collection_description(recProp)**
+  - prima objekat klase ReceiverProperty
+  - u zavisnosti od koda koji sadrzi smesta ga u odgovarajuci CollectionDescription objekat
+- **ispazni_buffer()**
+  - ispraznjuje buffer
+- **provera_za_slanje(trenutak_pocetka_prijema)**
+  - proverava da le je proslo 90 sekundi
+  - ako jeste onda pravi konekciju prema Replicator Receiver komponenti
+  - i salje joj podatke iz bufera
+- **handle_writer(connection, addres)**
+  - kao parametar prima adresu writera i njegovu konekciju
+  - u beskonacnoj petlji prima podatke od writera
+  - pa potom poziva funkcije konvertuj_u_receiver_property i ubaci_u_collection_description
+- **start_sender_server(socket-SenderServer)**
+  - kao parametar prima socket
+  - u beskonacnoj petlji ceka da se writeri konektuju
+  - ako se jedan writer konektuje pravi mu jedan nit
+
+Pri pokretanju komponente, kreira se nit za provera_za_slanje funkciju. Na ovaj nacin Sender moze da prima podatke od writera a paralelno proverava da li je proslo 90 sekundi za slanje podataka iz bufera. Kad se jedan Writer konektuje kreira mu se jedna posebna nit, da bi vise Writera istovremeno moglo da salje podatke.
 
 ## Replicator Receiver komponenta
   Replicator Receiver komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom, od koje prima CollectionDescription objekat, i sa Reader komponentama u zavisnosti od ispunjenosti određenog uslova kojima šalje DeltaCD objekat. 
