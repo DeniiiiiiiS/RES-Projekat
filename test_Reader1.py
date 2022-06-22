@@ -2,8 +2,8 @@
 import random
 import unittest
 from time import localtime
-from unittest.mock import patch, Mock
-from Reader1_functions import logger, check_deadband
+from unittest.mock import patch
+from Reader1_functions import logger, check_deadband, insert, get_last_value_for_code1, read_values_by_code1
 from Reader1_functions import insert_process
 
 
@@ -37,7 +37,7 @@ class TestLogger(unittest.TestCase):
                                           f" -> {message}\n")
 
 
-# test za insert_process
+# testovi za insert_process
 class TestInsertProcess(unittest.TestCase):
     @patch('Reader1_functions.insert')
     def test_process__good__code_digital(self, mock_insert):
@@ -77,24 +77,75 @@ class TestInsertProcess(unittest.TestCase):
         self.assertEqual(insert_process(1, 1, None, 100), "Code is not integer!")
 
 
-# test za check_deadband
+# testovi za check_deadband
 class TestCheckDeadband(unittest.TestCase):
     @patch('Reader1_functions.get_fetchall')
     @patch('Reader1_functions.insert')
     def test_check_doesnt_exist(self, mock_insert, mock_get_fetchall):
         mock_insert.return_value = "INSERT"
         mock_get_fetchall.return_value = None
-        self.assertEqual(check_deadband(1, 1, 'CODE_DIGITAL', 100), "INSERT")
+        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), "INSERT")
+
+    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader1_functions.insert')
+    def test_check_does_exist(self, mock_insert, mock_get_fetchall):
+        mock_insert.return_value = "INSERT"
+        mock_get_fetchall.return_value = [(10000,)]
+        # namerno 10000 da bi razlika bila veca od 2%
+        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), "INSERT")
+
+    @patch('Reader1_functions.get_fetchall')
+    @patch('Reader1_functions.insert')
+    def test_check_no_insert(self, mock_insert, mock_get_fetchall):
+        mock_insert.return_value = "INSERT"
+        mock_get_fetchall.return_value = [(100,)]
+        # namerno 100 da bi razlika bila tacno 0 sto je manje od 2%
+        self.assertEqual(check_deadband(1, 1, 'CODE_ANALOG', 100), None)
 
 
-#class TestCheckDeadband2(unittest.TestCase):
-#    @patch('Reader1_functions.get_fetchall')
-#    @patch('Reader1_functions.insert')
-#    def test_check_does_exist(self, mock_insert, mock_get_fetchall):
-#        mock_insert.return_value = "INSERT"
-#        mock_get_fetchall.return_value = None
-#        self.assertEqual(check_deadband(1, 1, 'CODE_DIGITAL', 100), "INSERT")
+# testovi za insert
+class TestInsert(unittest.TestCase):
+    def test_insert1(self):
+        self.assertEqual(insert(1, 1, 'CODE_ANALOG', 100), "Inserted successfully!")
 
+    def test_insert2(self):
+        self.assertEqual(insert(1, 1, 'CODE_DIGITAL', 100), "Inserted successfully!")
+
+
+class TestGetLast(unittest.TestCase):
+    def test_code_not_int(self):
+        self.assertEqual(get_last_value_for_code1(None), "Code is not integer!")
+
+    def test_code_not_1or2(self):
+        self.assertEqual(get_last_value_for_code1(3), "Code is not in range 1:2!")
+
+    @patch('Reader1_functions.get_fetchall')
+    def test_code_doesnt_exist(self, mock_get_fetchall):
+        mock_get_fetchall.return_value = None
+        self.assertEqual(get_last_value_for_code1(1), "Code doesnt exist")
+
+    @patch('Reader1_functions.get_fetchall')
+    def test_code_exists(self, mock_get_fetchall):
+        mock_get_fetchall.return_value = [(1, 1, 'CODE_DIGITAL', 10000, (2022, 6, 21, 13, 26, 3))]
+        self.assertEqual(get_last_value_for_code1(1), "Exists, printed")
+
+
+class TestReadValues(unittest.TestCase):
+    def test_code_not_int(self):
+        self.assertEqual(read_values_by_code1(None), "Code is not integer!")
+
+    def test_code_not_1or2(self):
+        self.assertEqual(read_values_by_code1(3), "Code is not in range 1:2!")
+
+    @patch('Reader1_functions.get_fetchall')
+    def test_code_doesnt_exist(self, mock_get_fetchall):
+        mock_get_fetchall.return_value = None
+        self.assertEqual(get_last_value_for_code1(1), "Code doesnt exist")
+
+    @patch('Reader1_functions.get_fetchall')
+    def test_code_exists(self, mock_get_fetchall):
+        mock_get_fetchall.return_value = [(1, 1, 'CODE_DIGITAL', 10000, (2022, 6, 21, 13, 26, 3))]
+        self.assertEqual(get_last_value_for_code1(1), "Exists, printed")
 
 if __name__ == '__main__':
     unittest.main()
