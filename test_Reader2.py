@@ -9,6 +9,7 @@ value_err = "Value is not valid!"
 code_err = "Code is not in range 3:4!"
 int_err = "Code is not integer!"
 
+
 class TestLogger(unittest.TestCase):
     def test_logger_characters(self):
         time_now = localtime()

@@ -1,5 +1,4 @@
 import mysql.connector
-from mysql.connector import Error
 from time import localtime, sleep
 import codovi
 
