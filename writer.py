@@ -20,13 +20,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     logger("Uspesno konektovanje na ReplicatorSender server!")
 
     while True:
-        print("---------- MENI ----------")
-        print("1. Slanje podataka bazi")
-        print("2. Dobavljanje poslednje vrednosti za izabrani kod")
-        print("3. Dobavljanje svih vrednosti za izabrani kod")
-        print("4. Izlazak iz programa")
+        print("---------- MENU ----------")
+        print("1. Send data to database")
+        print("2. Get last value for selected code")
+        print("3. Get all values for selected code")
+        print("4. Exit program")
 
-        print("Izaberite zeljenu opciju:")
+        print("Choose option by entering number:")
         opcija = input()
 
         if opcija == "1":
@@ -40,7 +40,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 value = input()
 
                 if int(code) == -1 or value == "END":
-                    print("Zaustavljanje writera...")
+                    print("Stopping writer...")
                     logger("Uneta vrednost za zaustavljanje rada writera")
                     break
                 if code.isdigit() == False:
@@ -58,7 +58,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     print("Code must be integer between 1 and 8")
                     logger("Uneta nevalidna vrednost za kod: broj nije izmedju 1 i 8")
         elif opcija == "2":
-            print("Unesite zeljeni kod za dobavljanje poslednje vrednosti")
+            print("Enter desired code to get last value")
             kod = input()
             if kod == "1" or kod == "2":
                 get_last_value_for_code1(int(kod))
@@ -69,9 +69,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             elif kod == "7" or kod == "8":
                 get_last_value_for_code4(int(kod))
             else:
-                print("Neispravno unet kod. Kodovi moraju biti u rasponu od 1 do 8")
+                print("Code is not recognized. Codes must be in range between 1 and 8")
         elif opcija == "3":
-            print("Unesite zeljeni kod za dobavljanje svih vrednosti")
+            print("Enter desired code to get all values")
             kod = input()
             if kod == "1" or kod == "2":
                 read_values_by_code1(int(kod))
@@ -82,12 +82,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             elif kod == "7" or kod == "8":
                 read_values_by_code4(int(kod))
             else:
-                print("Neispravno unet kod. Kodovi moraju biti u rasponu od 1 do 8")
+                print("Code is not recognized. Codes must be in range between 1 and 8")
         elif opcija == "4":
-            print("Program uspesno prekinut")
+            print("Exiting program . . .")
             break
         else:
-            print("Uneta vrednost nije prepoznata. Molimo pokusajte ponovo")
-            continue
+            print("Selected option not recognized. Please try again")
     # s.close()
 logger("Uspesno zatvoren writer klijent")
