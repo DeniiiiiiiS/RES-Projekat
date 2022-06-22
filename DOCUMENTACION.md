@@ -2,6 +2,20 @@
 - kod je pisan u python programskom jeziku
 - koriscena je klient/server arhitektura sa tcp protokolom
 - korisceni python paketi su socket, pickle, threading, time
+
+## Writer komponenta
+  Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
+    1. Slanje podataka ka bazi podataka
+      - Od korisnika se traži da unese kod i vrednost koju želi da upiše u bazu podataka
+    2. Dobijanje poslednje vrednosti za izabrani kod
+      - Od korisnika se traži da unese kod za koji želi da dobije poslednju vrednost iz baze podataka
+    3. Dobijanje svih vrednosti za izabrani kod
+      - Od korisnika se traži da unese kod za koji želi da dobije sve vrednosti iz baze podataka
+    4. Izlaz iz programa
+      - Odabirom ove opcije, program se zatvara
+  
+
+
 ## Replicator sender komponenta
 - vise vrajtera istovremeno moze uspotaviti konekciju ka senderu
 - na svakih 90 sekundi salje podatke replicator receiveru
