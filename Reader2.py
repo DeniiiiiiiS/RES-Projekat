@@ -33,22 +33,22 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # upisivanje vrednosti u tabelu iz add_list-e
         logger("Reader2 started reading data from add_list.")
         for cdx in add_lista:
-            id_add = cdx.getId()
-            dataset_add = cdx.getDataset()
-            hc_add = cdx.getHistoricalCollection().getNiz()
+            id_add = cdx.get_id()
+            dataset_add = cdx.get_dataset()
+            hc_add = cdx.get_historical_collection().get_niz()
             for cdy in hc_add:
-                code_add = cdy.getCode()
-                value_add = cdy.getValue()
+                code_add = cdy.get_code()
+                value_add = cdy.get_value()
                 insert_process(id_add, dataset_add, code_add, value_add)
 
         # upisivanje vrednosti u tabelu iz update_list-e
-        logger("Reader2 started reading data from update_list.")
+        logger("Reader1 started reading data from update_list.")
         for cdx in update_lista:
-            id_update = cdx.getId()
-            dataset_update = cdx.getDataset()
-            hc_update = cdx.getHistoricalCollection().getNiz()
+            id_update = cdx.get_id()
+            dataset_update = cdx.get_dataset()
+            hc_update = cdx.get_historical_collection().get_niz()
             for cdy in hc_update:
-                code_update = cdy.getCode()
-                value_update = cdy.getValue()
+                code_update = cdy.get_code()
+                value_update = cdy.get_value()
                 insert_process(id_update, dataset_update, code_update, value_update)
         conn.close()
