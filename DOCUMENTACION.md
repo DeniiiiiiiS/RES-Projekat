@@ -5,6 +5,7 @@
 - korisceni python paketi su socket, pickle, threading, time, unittest
 - za bazu podataka se koristi MySQL
 - prvo se pokrenu 4 readera, posle se pokrene receiver, pa sender, pa proizvoljan broj writera
+- za dokumentovanje izvršavanja programa koristi se Logger
 
 ## Writer komponenta
   Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
