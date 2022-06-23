@@ -12,7 +12,7 @@ BROJ_BAJTOVA_KOJI_SE_PRIMA = 1000
 HOST = "127.0.0.1"
 PORT1 = 8001
 PORT2 = 8002
-INTERVAL_SLANJA = 5  # U SEKUNDAMA IZRAZENO
+INTERVAL_SLANJA = 90  # U SEKUNDAMA IZRAZENO
 
 cd1 = CollectionDescription.CollectionDescription(1, 1)
 cd2 = CollectionDescription.CollectionDescription(2, 2)
@@ -97,7 +97,6 @@ def start_sender_server(socket_SenderServer):
         logger(f"Writer se uspeno konektovao sa adrese {addr}!")
         thread = threading.Thread(target=handle_writer, args=(conn, addr))  # ZA SVAKI WRITER SE KREIRA NOVI NIT
         thread.start()
-        print(f"Broj konektovanih writer je {threading.active_count() - 2}")
 
 
 trenutak_pocetka_prijema_podataka = time.time()

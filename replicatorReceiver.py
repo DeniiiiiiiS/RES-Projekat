@@ -59,9 +59,7 @@ while True:
     conn, addr = replicatorReceiverServer.accept()
     data = conn.recv(BROJ_BAJTOVA_KOJI_SE_PRIMA)
     buffer = pickle.loads(data)
-    print(len(delta_cd1.add_list))
     logger("Uspesno primljeni podaci na server!")
-    print(len(delta_cd1.update_list))
 
     i = 0
     for delta in delta_cd:
@@ -71,13 +69,10 @@ while True:
         dataset_iz_buff = buffer[i].get_dataset()
         for y in buffer[i].get_historical_collection().get_niz():
             code_iz_buff = y.get_code()
-            print(code_iz_buff)
             value_iz_buff = y.get_value()
-            print(value_iz_buff)
             if code_iz_buff not in kodovi:
                 delta.dodaj_novi(buffer[i])
                 kodovi.append(code_iz_buff)
-                print(kodovi)
                 logger("Uspesno dodan novi kod u add listu!")
             else:
                 delta.azuriraj_postojeci(buffer[i])
