@@ -84,7 +84,7 @@ while True:
 
 
     
-    if(len(delta_cd1.add_list) + len(delta_cd1.update_list) == 10):
+    if(len(delta_cd1.add_list) + len(delta_cd1.update_list) >= 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address1)
                 msg = pickle.dumps(delta_cd1)  
@@ -96,7 +96,7 @@ while True:
 
 
 
-    if(len(delta_cd2.add_list) + len(delta_cd2.update_list) == 10):    
+    if(len(delta_cd2.add_list) + len(delta_cd2.update_list) >= 10):    
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address2)
                 msg = pickle.dumps(delta_cd2)  
@@ -106,7 +106,7 @@ while True:
                 delta_cd2.update_list.clear()
                 logger("Liste za deltaCD2 ispraznjene!")
 
-    if(len(delta_cd3.add_list) + len(delta_cd3.update_list) == 10):
+    if(len(delta_cd3.add_list) + len(delta_cd3.update_list) >= 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address3)
                 msg = pickle.dumps(delta_cd3)  
@@ -116,7 +116,7 @@ while True:
                 delta_cd3.update_list.clear()
                 logger("Liste za deltaCD3 ispraznjene!")
 
-    if(len(delta_cd4.add_list) + len(delta_cd4.update_list) == 10):
+    if(len(delta_cd4.add_list) + len(delta_cd4.update_list) >= 10):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as replicatorReceiverClient:
                 replicatorReceiverClient.connect(address4)
                 msg = pickle.dumps(delta_cd4)  
