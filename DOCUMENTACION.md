@@ -4,6 +4,7 @@
 - sastoji se od 4 komponente(writer, replicator sender, replicator receiver, reader)
 - korisceni python paketi su socket, pickle, threading, time, unittest
 - za bazu podataka se koristi MySQL
+- prvo se pokrenu 4 readera, posle se pokrene receiver, pa sender, pa proizvoljan broj writera
 
 ## Writer komponenta
   Writer odnosno početna komponenta se koristi za uspostavljanje konekcije sa Replicator Sender komponentom. Korisnik može da bira iz menija opcije za rad:
